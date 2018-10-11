@@ -92,6 +92,9 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
             PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
             CurrentIndex += 1
             continue
+        elif Post.getDate() == None:
+            CurrentIndex += 1
+            continue
         
         for i in range(1, 20):
 
@@ -136,10 +139,11 @@ def PostHandler(Post):
     global List
     # 6 +   9/24 DuDuCute     □ [徵求] 聊聊                         (Wanted)
     Author = Post.getAuthor()
+    Author = Author[:Author.find('(')]
+    Author = Author.rstrip()
+    
     Title = Post.getTitle()
     DeleteStatus = Post.getDeleteStatus()
-    ID = Post.getID()
-
 
     if Author not in List:
         List[Author] = []
@@ -164,7 +168,7 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
     
-    PTTBot = PTT.Library()
+    PTTBot = PTT.Library(kickOtherLogin=False)
 
     StartTime = time.time()
 
@@ -202,8 +206,6 @@ if __name__ == '__main__':
         if len(TitleList) < 4:
             continue
         # print('=' * 5 + ' ' + Suspect + ' ' + '=' * 5)
-        Suspect = Suspect[:Suspect.find('(')]
-        Suspect.rstrip()
 
         Result += NewLine
         for Title in TitleList:
@@ -212,30 +214,30 @@ if __name__ == '__main__':
         
     EndTime = time.time()
     # 
+    Title = Date + ' 汪踢板多PO結果'
+    Content = '此封信內容由汪踢自動抓多 PO 程式產生' + NewLine + '共耗時 ' + str(int(EndTime - StartTime)) + ' 秒執行完畢' + NewLine + NewLine
     if Result != '':
-        Title = Date + ' 汪踢板多PO結果'
-        Content = '此封信內容由汪踢自動抓多 PO 程式產生' + NewLine + '共耗時 ' + str(int(EndTime - StartTime)) + ' 秒執行完畢' + NewLine + NewLine
         Content += Result
-        Content += '\r\r內容如有失準，歡迎告知。' + NewLine
-        Content += '此訊息同步發送給 ' + ' '.join(Moderators) + NewLine
-        Content += NewLine
-        Content += ID
-
-        print(Title)
-        print(Content)
-
-        SendMail = input('請問寄出通知信給板主群？[Y/n] ').lower()
-        SendMail = (SendMail == 'y' or SendMail == '')
-
-        if SendMail:
-            for Moderator in Moderators:
-                ErrCode = PTTBot.mail(Moderator, Title, Content, 0)
-                if ErrCode == PTT.ErrorCode.Success:
-                    PTTBot.Log('寄信給 ' + Moderator + ' 成功')
-                else:
-                    PTTBot.Log('寄信給 ' + Moderator + ' 失敗')
-        else:
-            PTTBot.Log('取消寄信')
     else:
-        print('無人違規')
+        Content += '昨天無人違反多PO板規'
+    Content += NewLine + NewLine + '內容如有失準，歡迎告知。' + NewLine
+    Content += '此訊息同步發送給 ' + ' '.join(Moderators) + NewLine
+    Content += NewLine
+    Content += ID
+
+    print(Title)
+    print(Content)
+
+    SendMail = input('請問寄出通知信給板主群？[Y/n] ').lower()
+    SendMail = (SendMail == 'y' or SendMail == '')
+
+    if SendMail:
+        for Moderator in Moderators:
+            ErrCode = PTTBot.mail(Moderator, Title, Content, 0)
+            if ErrCode == PTT.ErrorCode.Success:
+                PTTBot.Log('寄信給 ' + Moderator + ' 成功')
+            else:
+                PTTBot.Log('寄信給 ' + Moderator + ' 失敗')
+    else:
+        PTTBot.Log('取消寄信')
     PTTBot.logout()
