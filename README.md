@@ -20,7 +20,7 @@
 
 執行
 ```
-python WantedMultiPost.py
+python 多PO.py
 ```
 
 需求
