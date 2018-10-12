@@ -48,6 +48,8 @@ def getToday():
 
 def getYesterDay(TodayOldestIndex):
 
+    ResultIndex = 0
+
     for i in range(1, 20):
     
         ErrCode, Post = PTTBot.getPost(Board, PostIndex=TodayOldestIndex - i)
@@ -61,10 +63,10 @@ def getYesterDay(TodayOldestIndex):
         elif ErrCode != PTT.ErrorCode.Success:
             PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
             continue
-        
+        ResultIndex = TodayOldestIndex - i
         break
     result = Post.getDate()[:10]
-    return result
+    return ResultIndex, result
 
 def findFirstIndex(NewestIndex, Todaty, show=False):
 
@@ -138,9 +140,11 @@ List = {}
 def PostHandler(Post):
     global List
     # 6 +   9/24 DuDuCute     □ [徵求] 聊聊                         (Wanted)
+
     Author = Post.getAuthor()
-    Author = Author[:Author.find('(')]
-    Author = Author.rstrip()
+    if '(' in Author:
+        Author = Author[:Author.find('(')]
+        Author = Author.rstrip()
     
     Title = Post.getTitle()
     DeleteStatus = Post.getDeleteStatus()
@@ -178,18 +182,19 @@ if __name__ == '__main__':
         sys.exit()
     
     NewestIndex, Todaty = getToday()
-    PTTBot.Log('Todaty: >' + Todaty + '<')
+    PTTBot.Log('本日日期: >' + Todaty + '<')
 
     PTTBot.Log('最新文章編號: ' + str(NewestIndex))
     TodayFirstIndex = findFirstIndex(NewestIndex, Todaty)
     PTTBot.Log('本日最舊文章編號: ' + str(TodayFirstIndex))
 
-    YesterDay = getYesterDay(TodayFirstIndex)
-    PTTBot.Log('YesterDay: >' + YesterDay + '<')
-    YesterDayIndex = findFirstIndex(TodayFirstIndex - 1, YesterDay, show=False)
-    PTTBot.Log('昨日最舊文章編號: ' + str(YesterDayIndex))
+    YesterDayNewIndex, YesterDay = getYesterDay(TodayFirstIndex)
+    PTTBot.Log('昨日日期: >' + YesterDay + '<')
+    PTTBot.Log('昨日最新文章編號: >' + str(YesterDayNewIndex) + '<')
+    YesterDayOldIndex = findFirstIndex(TodayFirstIndex - 1, YesterDay, show=False)
+    PTTBot.Log('昨日最舊文章編號: ' + str(YesterDayOldIndex))
 
-    ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard(Board, PostHandler, StartIndex=YesterDayIndex, EndIndex=TodayFirstIndex - 1)
+    ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard(Board, PostHandler, StartIndex=YesterDayOldIndex, EndIndex=YesterDayNewIndex)
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('爬行失敗')
         sys.exit()
