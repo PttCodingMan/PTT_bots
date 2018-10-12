@@ -7,7 +7,7 @@ import codecs
 import traceback
 from datetime import date, timedelta
 # from time import gmtime, strftime
-
+sys.path.insert(0, 'D:/Git/PTTLibrary')
 from PTTLibrary import PTT
 import Util
 
@@ -42,7 +42,7 @@ def PostHandler(Post):
         # 不正常文章 @@
         return
     Content = Content[Content.find('───────────────────────'):]
-
+    Content = Content[Content.find('\n') + 1:]
     if not '※ 發信站:' in Content:
         print('沒有發信站')
         print(Title)
@@ -50,8 +50,18 @@ def PostHandler(Post):
         return
     
     Content = Content[:Content.find('※ 發信站:')]
+    if Content.count('--') > 1:
+        # 有簽名檔移除
+        if '-----' in Content:
+            # APP 簽名檔
+            Content = Content[:Content.rfind('-----')]
+        else:
+            # print(Content)
+            Content = Content[:Content.rfind('--')]
+            Content = Content[:Content.rfind('--')]
+            # print(Content)
 
-    List[Author].append(Content)
+    List[Author].append([Title, Content])
 
 if __name__ == '__main__':
     try:
@@ -93,14 +103,27 @@ if __name__ == '__main__':
     
     PTTBot.Log('爬行成功共 ' + str(SuccessCount) + ' 篇文章 共有 ' + str(DeleteCount) + ' 篇文章被刪除')
 
-    TargetWord = 'ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄧㄨㄩㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦ'.split()
+    # TargetWord = 'ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄧㄨㄩㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦ'
+    # 把注音 ㄧ 拿掉，太容易搞混了
+    TargetWord = 'ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄨㄩㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦ'
 
     for Suspect, ContentList in List.items():
-        print('======== ' + Suspect + ' ========')
-        for Content in ContentList:
-            print(Content)
+        # print('======== ' + Suspect + ' ========')
+        for TitleContent in ContentList:
+            
+            Content = TitleContent[1]
+            # print(Title)
+            # print(Content)
+            isTarget = False
+            for Target in TargetWord:
+                if Target in Content:
+                    print('Find >' + Target + '<')
+                    isTarget = True
+                    break
+            if isTarget:
+                print('======== ' + Suspect + ' ========')
+                Title = TitleContent[0]
+                print(Title)
+                print(Content)
         
-        break
-    
-
     EndTime = time.time()

@@ -24,9 +24,11 @@ def getToday():
 
         if ErrCode == PTT.ErrorCode.PostDeleted:
             if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
-                PTTBot.Log('文章被原 PO 刪掉了')
+                # PTTBot.Log('文章被原 PO 刪掉了')
+                pass
             elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
-                PTTBot.Log('文章被版主刪掉了')
+                # PTTBot.Log('文章被版主刪掉了')
+                pass
             continue
         elif ErrCode != PTT.ErrorCode.Success:
             PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
