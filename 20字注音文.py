@@ -35,9 +35,7 @@ def PostHandler(Post):
         return
     if Content == None:
         return
-    
-    # print(Content)
-    # ───────────────────────────────────────
+
     if not '───────────────────────' in Content:
         # 不正常文章 @@
         return
@@ -51,17 +49,63 @@ def PostHandler(Post):
     
     Content = Content[:Content.find('※ 發信站:')]
     if Content.count('--') > 1:
-        # 有簽名檔移除
-        if '-----' in Content:
-            # APP 簽名檔
-            Content = Content[:Content.rfind('-----')]
-        else:
-            # print(Content)
-            Content = Content[:Content.rfind('--')]
-            Content = Content[:Content.rfind('--')]
-            # print(Content)
+        print(Content)
+        ContentList = Content.split('\n')
+        for i in range(len(ContentList)):
+            line = ContentList[i]
 
+            needRemove = False
+            if '--' in line:
+                for ii in range(1, 10):
+                    if i + ii >= len(ContentList):
+                        break
+                    nextline = ContentList[i + ii]
+                    if '※ 發信站:' in nextline:
+                        needRemove = True
+                        break
+                
+                if needRemove:
+                    Content = Content[:Content.find(line)]
+                    break
+        print(Content)
     List[Author].append([Title, Content])
+def countChinese(input):
+    result = 0
+    for char in input:
+        if '\u4e00' <= char <= '\u9fff':
+            result += 1
+    return result
+def countJP(input):
+    result = 0
+    for char in input:
+        if '\u30a0' <= char <= '\u30ff':
+            result += 1
+        if '\u3040' <= char <= '\u309f':
+            result += 1
+    return result
+def countEng(input):
+    # isalpha
+    result = 0
+    LastCharInde = -1
+    for i in range(len(input)):
+        if LastCharInde != -1 and i <= LastCharInde:
+            continue
+
+        char = input[i]
+
+        ii = i
+        while char.isalpha():
+            LastCharInde = ii
+            ii += 1
+            if ii >= len(input):
+                break
+            char = input[ii]
+        if i != ii:
+            result += 1
+    
+    return result
+
+#unicode japanese hiragana 
 
 if __name__ == '__main__':
     try:
@@ -107,13 +151,13 @@ if __name__ == '__main__':
     # 把注音 ㄧ 拿掉，太容易搞混了
     TargetWord = 'ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄨㄩㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦ'
 
+    Result_1 = ''
+    Result_2 = ''
+    NewLine = '\r\n'
     for Suspect, ContentList in List.items():
-        # print('======== ' + Suspect + ' ========')
         for TitleContent in ContentList:
             
             Content = TitleContent[1]
-            # print(Title)
-            # print(Content)
             isTarget = False
             for Target in TargetWord:
                 if Target in Content:
@@ -121,9 +165,24 @@ if __name__ == '__main__':
                     isTarget = True
                     break
             if isTarget:
-                print('======== ' + Suspect + ' ========')
+                print('注音文 ======== ' + Suspect + ' ========')
                 Title = TitleContent[0]
                 print(Title)
                 print(Content)
-        
+
+                Result_1 += '    ' + Suspect + '     □ ' + Title + NewLine
+            
+            Count_Chinese = countChinese(Content)
+            Count_JP = countJP(Content)
+            Count_Eng = countEng(Content)
+
+            Total = Count_Chinese + Count_JP + Count_Eng
+            if Total < 20:
+                print('20 字 ======== ' + Suspect + ' ========')
+                Title = TitleContent[0]
+                print(Title)
+                print(Content)
+
+                Result_2 += '    ' + Suspect + '     □ ' + Title + NewLine
+
     EndTime = time.time()
