@@ -72,6 +72,8 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
     CurrentIndex = int((StartIndex + EndIndex) / 2)
     CurrentToday = ''
     LastCurrentToday = ''
+    RetryIndex = 0
+
     while True:
         if show:
             PTTBot.Log('嘗試: ' + str(CurrentIndex))
@@ -83,17 +85,20 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
                 #     PTTBot.Log('文章被原 PO 刪掉了')
                 # elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
                 #     PTTBot.Log('文章被版主刪掉了')
-            
-            CurrentIndex += 1
+            CurrentIndex = StartIndex + RetryIndex
+            RetryIndex += 1
             continue
         elif ErrCode != PTT.ErrorCode.Success:
             PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
-            CurrentIndex += 1
+            CurrentIndex = StartIndex + RetryIndex
+            RetryIndex += 1
             continue
         elif Post.getDate() == None:
-            CurrentIndex += 1
+            CurrentIndex = StartIndex + RetryIndex
+            RetryIndex += 1
             continue
         
+        RetryIndex = 0
         for i in range(1, 20):
 
             ErrCode, LastPost = PTTBot.getPost(Board, PostIndex=CurrentIndex - i)
@@ -127,10 +132,9 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
             print('CurrentToday: ' + CurrentToday)
             print(StartIndex)
             print(EndIndex)
-
+        
         if CurrentToday == Todaty and LastCurrentToday != Todaty:
             return CurrentIndex
-
         if CurrentToday == Todaty and LastCurrentToday == Todaty:
             EndIndex = CurrentIndex - 1  
         elif CurrentToday != Todaty and LastCurrentToday != Todaty:
