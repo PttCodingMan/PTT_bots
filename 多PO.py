@@ -96,7 +96,9 @@ if __name__ == '__main__':
     EndTime = time.time()
     # 
     Title = Date + ' 汪踢板多PO結果'
-    Content = '此封信內容由汪踢自動抓多 PO 程式產生' + NewLine + '共耗時 ' + str(int(EndTime - StartTime)) + ' 秒執行完畢' + NewLine + NewLine
+    Content = '此封信內容由汪踢自動抓多 PO 程式產生' + NewLine + '共耗時 ' + str(int(EndTime - StartTime)) + ' 秒執行完畢' + NewLine
+    Content += '蒐集範圍為編號 ' + str(YesterDayOldIndex) + ' ~ ' + str(YesterDayNewIndex) + NewLine + NewLine
+
     if Result != '':
         Content += Result
     else:
