@@ -62,13 +62,13 @@ if __name__ == '__main__':
 
     PTTBot.Log('最新文章編號: ' + str(NewestIndex))
     TodayFirstIndex = Util.findFirstIndex(NewestIndex, Todaty)
-    PTTBot.Log('本日最舊文章編號: ' + str(TodayFirstIndex))
+    PTTBot.Log('本日第一篇文章編號: ' + str(TodayFirstIndex))
 
     YesterDayNewIndex, YesterDay = Util.getYesterDay(TodayFirstIndex)
     PTTBot.Log('昨日日期: >' + YesterDay + '<')
-    PTTBot.Log('昨日最新文章編號: >' + str(YesterDayNewIndex) + '<')
-    YesterDayOldIndex = Util.findFirstIndex(TodayFirstIndex - 1, YesterDay, show=False)
-    PTTBot.Log('昨日最舊文章編號: ' + str(YesterDayOldIndex))
+    PTTBot.Log('昨日最後一篇文章編號: >' + str(YesterDayNewIndex) + '<')
+    YesterDayOldIndex = Util.findFirstIndex(TodayFirstIndex - 1, YesterDay, show=True)
+    PTTBot.Log('昨日第一篇文章編號: ' + str(YesterDayOldIndex))
 
     ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard(Util.Board, PostHandler, StartIndex=YesterDayOldIndex, EndIndex=YesterDayNewIndex)
     if ErrCode != PTT.ErrorCode.Success:
