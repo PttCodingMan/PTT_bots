@@ -23,13 +23,14 @@ def getToday():
         ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
 
         if ErrCode == PTT.ErrorCode.PostDeleted:
-            if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
-                # PTTBot.Log('文章被原 PO 刪掉了')
-                pass
-            elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
-                # PTTBot.Log('文章被版主刪掉了')
-                pass
-            continue
+            # if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
+            #     # PTTBot.Log('文章被原 PO 刪掉了')
+            #     pass
+            # elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
+            #     # PTTBot.Log('文章被版主刪掉了')
+            #     pass
+            # continue
+            pass
         elif ErrCode != PTT.ErrorCode.Success:
             PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
             continue
@@ -39,7 +40,7 @@ def getToday():
         break
     
     # print(Post.getDate())
-    result = Post.getDate()[:10]
+    result = Post.getListDate()
     return NewestIndex, result
 
 def getYesterDay(TodayOldestIndex):
@@ -55,13 +56,13 @@ def getYesterDay(TodayOldestIndex):
                 PTTBot.Log('文章被原 PO 刪掉了')
             elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
                 PTTBot.Log('文章被版主刪掉了')
-            continue
+            # continue
         elif ErrCode != PTT.ErrorCode.Success:
             PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
             continue
         ResultIndex = TodayOldestIndex - i
         break
-    result = Post.getDate()[:10]
+    result = Post.getListDate()
     return ResultIndex, result
 
 def findFirstIndex(NewestIndex, Todaty, show=False):
@@ -84,8 +85,9 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
                 # elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
                 #     PTTBot.Log('文章被版主刪掉了')
             
-            CurrentIndex += 1
-            continue
+            # CurrentIndex += 1
+            # continue
+            pass
         elif ErrCode != PTT.ErrorCode.Success:
             PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
             CurrentIndex += 1
@@ -99,13 +101,14 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
             ErrCode, LastPost = PTTBot.getPost(Board, PostIndex=CurrentIndex - i)
 
             if ErrCode == PTT.ErrorCode.PostDeleted:
-                if LastPost.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
-                    if show:
-                        PTTBot.Log('文章被原 PO 刪掉了')
-                elif LastPost.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
-                    if show:
-                        PTTBot.Log('文章被版主刪掉了')
-                continue
+                # if LastPost.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
+                #     if show:
+                #         PTTBot.Log('文章被原 PO 刪掉了')
+                # elif LastPost.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
+                #     if show:
+                #         PTTBot.Log('文章被版主刪掉了')
+                # continue
+                pass
             elif ErrCode != PTT.ErrorCode.Success:
                 if show:
                     PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
@@ -119,8 +122,8 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
                 PTTBot.Log('找到上一篇: ' + str(CurrentIndex - i))
 
             break
-        CurrentToday = Post.getDate()[:10]
-        LastCurrentToday = LastPost.getDate()[:10]
+        CurrentToday = Post.getListDate()
+        LastCurrentToday = LastPost.getListDate()
 
         if show:
             print('LastCurrentToday: ' + LastCurrentToday)
