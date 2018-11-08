@@ -11,7 +11,8 @@ from datetime import date, timedelta
 from PTTLibrary import PTT
 import Util
 
-List = {}
+List = dict()
+
 
 def PostHandler(Post):
     global List
@@ -61,8 +62,6 @@ if __name__ == '__main__':
             PTTBot.Log('輸入錯誤，請重新輸入')
             continue
 
-    StartTime = time.time()
-
     ErrCode = PTTBot.login(ID, Password)
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('登入失敗')
@@ -70,62 +69,68 @@ if __name__ == '__main__':
 
     PTTBot.Log('從 ' + str(HowManyDay) + ' 天前開始抓多PO')
 
+    Result = ''
+    NewLine = '\r\n'
+
     for dayAgo in range(HowManyDay, 0, -1):
-        PTTBot.Log('開始 ' + str(dayAgo) + ' 天前的多PO偵測')
-        PTTBot.Log('日期: ' + Util.getDate(dayAgo))
-        Util.findPostRrange(dayAgo, show=True)
 
-    # ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard(Util.Board, PostHandler, StartIndex=YesterDayOldIndex, EndIndex=YesterDayNewIndex)
-    # if ErrCode != PTT.ErrorCode.Success:
-    #     PTTBot.Log('爬行失敗')
-    #     sys.exit()
-    
-    # PTTBot.Log('爬行成功共 ' + str(SuccessCount) + ' 篇文章 共有 ' + str(DeleteCount) + ' 篇文章被刪除')
-    # yesterday = date.today() - timedelta(1)
-
-    # Date = yesterday.strftime("%m/%d")
-
-    # Result = ''
-    # NewLine = '\r\n'
-    # for Suspect, TitleList in List.items():
-    #     # 6 +   9/24 DuDuCute     □ [徵求] 聊聊                         (Wanted)
-    #     if len(TitleList) < 4:
-    #         continue
-    #     # print('=' * 5 + ' ' + Suspect + ' ' + '=' * 5)
-
-    #     Result += NewLine
-    #     for Title in TitleList:
-    #         # print('>   ' + Date + ' ' + Suspect + '     □ ' + Title)
-    #         Result += '>   ' + Date + ' ' + Suspect + '     □ ' + Title + NewLine
+        StartTime = time.time()
+        List = dict()
+        CurrentDate = Util.getDate(dayAgo)
         
-    # EndTime = time.time()
-    # # 
-    # Title = Date + ' 汪踢板多PO結果'
-    # Content = '此封信內容由汪踢自動抓多 PO 程式產生' + NewLine + '共耗時 ' + str(int(EndTime - StartTime)) + ' 秒執行完畢' + NewLine
-    # Content += '蒐集範圍為編號 ' + str(YesterDayOldIndex) + ' ~ ' + str(YesterDayNewIndex) + NewLine + NewLine
+        PTTBot.Log('開始 ' + str(dayAgo) + ' 天前的多PO偵測')
+        PTTBot.Log('日期: ' + CurrentDate)
+        Start, End = Util.findPostRrange(dayAgo, show=False)
+        PTTBot.Log('編號範圍 ' + str(Start) + ' ~ ' + str(End))
 
-    # if Result != '':
-    #     Content += Result
-    # else:
-    #     Content += '昨天無人違反多PO板規'
-    # Content += NewLine + NewLine + '內容如有失準，歡迎告知。' + NewLine
-    # Content += '此訊息同步發送給 ' + ' '.join(Util.Moderators) + NewLine
-    # Content += NewLine
-    # Content += ID
+        ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard(
+            Util.Board, PostHandler, 
+            StartIndex=Start, EndIndex=End)
+        if ErrCode != PTT.ErrorCode.Success:
+            PTTBot.Log('爬行失敗')
+            sys.exit()
+    
+        PTTBot.Log('爬行成功共 ' + str(SuccessCount) + ' 篇文章 共有 ' + str(DeleteCount) + ' 篇文章被刪除')
+        
+        Result = ''
+        for Suspect, TitleList in List.items():
+            # 6 +   9/24 DuDuCute     □ [徵求] 聊聊                         (Wanted)
+            if len(TitleList) < 4:
+                continue
+            print('=' * 5 + ' ' + Suspect + ' ' + '=' * 5)
 
-    # print(Title)
-    # print(Content)
+            Result += NewLine
+            for Title in TitleList:
+                Result += '>   ' + CurrentDate + ' ' + Suspect + '     □ ' + Title + NewLine
+        
+        EndTime = time.time()
+        
+        Title = CurrentDate + ' 汪踢板多PO結果'
+        Content = '此封信內容由汪踢自動抓多 PO 程式產生' + NewLine + '共耗時 ' + str(int(EndTime - StartTime)) + ' 秒執行完畢' + NewLine
+        Content += '蒐集範圍為編號 ' + str(Start) + ' ~ ' + str(End) + NewLine + NewLine
 
-    # SendMail = input('請問寄出通知信給板主群？[Y/n] ').lower()
-    # SendMail = (SendMail == 'y' or SendMail == '')
+        if Result != '':
+            Content += Result
+        else:
+            Content += CurrentDate + '無人違反多PO板規'
+        Content += NewLine + NewLine + '內容如有失準，歡迎告知。' + NewLine
+        Content += '此訊息同步發送給 ' + ' '.join(Util.Moderators) + NewLine
+        Content += NewLine
+        Content += ID
 
-    # if SendMail:
-    #     for Moderator in Util.Moderators:
-    #         ErrCode = PTTBot.mail(Moderator, Title, Content, 0)
-    #         if ErrCode == PTT.ErrorCode.Success:
-    #             PTTBot.Log('寄信給 ' + Moderator + ' 成功')
-    #         else:
-    #             PTTBot.Log('寄信給 ' + Moderator + ' 失敗')
-    # else:
-    #     PTTBot.Log('取消寄信')
+        print(Title)
+        print(Content)
+
+        # SendMail = input('請問寄出通知信給板主群？[Y/n] ').lower()
+        # SendMail = (SendMail == 'y' or SendMail == '')
+        SendMail = True
+        if SendMail:
+            for Moderator in Util.Moderators:
+                ErrCode = PTTBot.mail(Moderator, Title, Content, 0)
+                if ErrCode == PTT.ErrorCode.Success:
+                    PTTBot.Log('寄信給 ' + Moderator + ' 成功')
+                else:
+                    PTTBot.Log('寄信給 ' + Moderator + ' 失敗')
+        else:
+            PTTBot.Log('取消寄信')
     PTTBot.logout()

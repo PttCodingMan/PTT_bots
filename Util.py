@@ -142,11 +142,15 @@ def getDate(TimeDel, PTTSytle=True):
         PassDate = LastDate[1:]
     return PassDate
 
+HistoryList = dict()
 
 
 def findCurrentDateFirst(NewestIndex, DayAgo, show=False):
     
-    global var1
+    global HistoryList
+
+    if str(DayAgo) in HistoryList:
+        return HistoryList[str(DayAgo)]
 
     CurrentDate_0 = getDate(DayAgo + 1, PTTSytle=False).replace('/', '').strip()
     CurrentDate_1 = getDate(DayAgo, PTTSytle=False).replace('/', '').strip()
@@ -216,6 +220,7 @@ def findCurrentDateFirst(NewestIndex, DayAgo, show=False):
             print(EndIndex)
         
         if CurrentTarget == FinishTarget:
+            HistoryList[str(DayAgo)] = CurrentIndex
             return CurrentIndex
         if CurrentTarget > FinishTarget:
             EndIndex = CurrentIndex - 1  
@@ -242,15 +247,4 @@ def findPostRrange(DayAgo, show=False):
         print('Result', Start, End)
 
     return Start, End
-
-    # for i in range(10):
-    #     PassDay = date.today() - timedelta(1 + i)
-
-    #     PassDate = PassDay.strftime("%m/%d")
-    #     if PassDate == Date:
-
-    #         LastDate = (date.today() - timedelta(2 + i)).strftime("%m/%d")
-    #         NextDate = (date.today() - timedelta(    i)).strftime("%m/%d")
-
-    #         break
     
