@@ -11,10 +11,12 @@ from datetime import date, timedelta
 from PTTLibrary import PTT
 import Util
 
-Test = True
+Test = False
 
 
 def PostHandler(Post):
+    if Post is None:
+        return
     global AuthorList
     global IPList
 
@@ -31,6 +33,9 @@ def PostHandler(Post):
         Title = '(本文已被刪除) [' + Author + ']'
     elif DeleteStatus == PTT.PostDeleteStatus.ByModerator:
         Title = '(本文已被刪除) <' + Author + '>'
+    elif DeleteStatus == PTT.PostDeleteStatus.ByUnknow:
+        Title = '(本文已被刪除) <' + Author + '>'
+
     if Title is None:
         Title = ''
     # Title is OK
@@ -45,7 +50,7 @@ def PostHandler(Post):
         if '[公告]' in Title:
             return
         if IP is not None:
-            IPList[IP].append((Author, Title))
+            IPList[IP].append(Author + '     □ ' + Title)
 
     AuthorList[Author].append(Title)
     
@@ -99,11 +104,16 @@ if __name__ == '__main__':
         Start, End = Util.findPostRrange(dayAgo, show=False)
         PTTBot.Log('編號範圍 ' + str(Start) + ' ~ ' + str(End))
 
+        # sys.exit()
+
         if not Test:
 
-            ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard(
-                Util.Board, PostHandler, 
-                StartIndex=Start, EndIndex=End)
+            ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard(Util.Board, PostHandler, 
+                                                                   StartIndex=Start, 
+                                                                   EndIndex=End,
+                                                                   SearchType=Util.PostSearchType, 
+                                                                   Search=Util.PostSearch
+                                                                   )
             if ErrCode != PTT.ErrorCode.Success:
                 PTTBot.Log('爬行失敗')
                 sys.exit()
@@ -111,31 +121,51 @@ if __name__ == '__main__':
         else:
 
             for PostIndex in range(Start, End + 1):
-                print(PostIndex)
-                ErrCode, Post = PTTBot.getPost(Util.Board, PostIndex=PostIndex)
+                ErrCode, Post = PTTBot.getPost(Util.Board, PostIndex=PostIndex, SearchType=Util.PostSearchType, Search=Util.PostSearch)
+                if ErrCode == PTT.ErrorCode.PostDeleted:
+                    if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
+                        # PTTBot.Log('文章被原 PO 刪掉了')
+                        pass
+                    elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
+                        # PTTBot.Log('文章被版主刪掉了')
+                        pass
+                    elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByUnknow:
+                        # PTTBot.Log('文章被刪掉了 in ALLPOST')
+                        pass
+
+                    PostHandler(Post)
+                    continue
+                elif ErrCode != PTT.ErrorCode.Success:
+                    PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+                    PostHandler(Post)
+                    sys.exit()
+                    continue
 
                 PostHandler(Post)
             
-        Result = ''
+        MultiPOResult = ''
         for Suspect, TitleAuthorList in AuthorList.items():
             
             if len(TitleAuthorList) < 4:
                 continue
             # print('=' * 5 + ' ' + Suspect + ' ' + '=' * 5)
 
-            Result += NewLine
+            MultiPOResult += NewLine
             for Title in TitleAuthorList:
-                Result += '>   ' + CurrentDate + ' ' + Suspect + '     □ ' + Title + NewLine
+                MultiPOResult += '>   ' + CurrentDate + ' ' + Suspect + '     □ ' + Title + NewLine
         
+        IPResult = ''
         for IP, SuspectList in IPList.items():
             # print('len:', len(SuspectList))
-            if len(SuspectList) <= 2:
+            if len(SuspectList) <= 3:
                 continue
             
-            print('IP:', IP)
+            # print('IP:', IP)
+            IPResult += 'IP: ' + IP + NewLine
         
-            for Author, Title in SuspectList:
-                print('>   ' + CurrentDate + ' ' + Suspect + '     □ ' + Title)
+            for Line in SuspectList:
+                # print('>   ' + CurrentDate + ' ' + Line)
+                IPResult += '>   ' + CurrentDate + ' ' + Line + NewLine
         
         EndTime = time.time()
         
@@ -144,11 +174,17 @@ if __name__ == '__main__':
         Content = '此封信內容由汪踢自動抓多 PO 程式產生' + NewLine + '共耗時 ' + str(int(EndTime - StartTime)) + ' 秒執行完畢' + NewLine
         Content += '蒐集範圍為編號 ' + str(Start) + ' ~ ' + str(End) + NewLine + NewLine
 
-        if Result != '':
-            Content += Result
+        if MultiPOResult != '':
+            Content += MultiPOResult
         else:
-            Content += CurrentDate + '無人違反多PO板規'
-        Content += NewLine + NewLine + '內容如有失準，歡迎告知。' + NewLine
+            Content += CurrentDate + '無人違反多PO板規' + NewLine
+        
+        if IPResult != '':
+            Content += IPResult
+        else:
+            Content += '沒有發現特定 IP 有四篇以上文章' + NewLine
+
+        Content += NewLine + '內容如有失準，歡迎告知。' + NewLine
         MailContent = Content
         Content += '此訊息同步發送給 ' + ' '.join(Util.Moderators) + NewLine
         Content += NewLine
@@ -159,8 +195,8 @@ if __name__ == '__main__':
 
         # SendMail = input('請問寄出通知信給板主群？[Y/n] ').lower()
         # SendMail = (SendMail == 'y' or SendMail == '')
-        SendMail = False
-        TestBackup = False
+        SendMail = True
+        TestBackup = True
         # False True
         if SendMail:
             for Moderator in Util.Moderators:

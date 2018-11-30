@@ -4,12 +4,21 @@ from PTTLibrary import PTT
 from datetime import date, timedelta
 
 PTTBot = None
-Board = 'Wanted'
+Board = 'ALLPOST'
+PostSearchType = PTT.PostSearchType.Keyword
+PostSearch = '(Wanted)'
 Moderators = ['gogin', 'LittleCalf']
 
 
 def getToday():
-    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
+
+    global PTTBot
+    global Board
+    global SearchType
+    global Search
+    global Moderators
+
+    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board, SearchType=PostSearchType, Search=PostSearch)
 
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
@@ -21,7 +30,7 @@ def getToday():
 
     for i in range(20):
 
-        ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i)
+        ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex - i, SearchType=PostSearchType, Search=PostSearch)
 
         if ErrCode == PTT.ErrorCode.PostDeleted:
             # if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
@@ -44,13 +53,19 @@ def getToday():
     result = Post.getListDate()
     return NewestIndex, result
 
+
 def getYesterDay(TodayOldestIndex):
+    global PTTBot
+    global Board
+    global SearchType
+    global Search
+    global Moderators
 
     ResultIndex = 0
 
     for i in range(1, 20):
     
-        ErrCode, Post = PTTBot.getPost(Board, PostIndex=TodayOldestIndex - i)
+        ErrCode, Post = PTTBot.getPost(Board, PostIndex=TodayOldestIndex - i, SearchType=PostSearchType, Search=PostSearch)
 
         if ErrCode == PTT.ErrorCode.PostDeleted:
             if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
@@ -68,6 +83,11 @@ def getYesterDay(TodayOldestIndex):
 
 
 def findFirstIndex(NewestIndex, Todaty, show=False):
+    global PTTBot
+    global Board
+    global SearchType
+    global Search
+    global Moderators
 
     StartIndex = 1
     EndIndex = NewestIndex
@@ -80,7 +100,8 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
     while True:
         if show:
             PTTBot.Log('嘗試: ' + str(CurrentIndex))
-        ErrCode, Post = PTTBot.getPost(Board, PostIndex=CurrentIndex)
+        
+        ErrCode, Post = PTTBot.getPost(Board, PostIndex=CurrentIndex, SearchType=PostSearchType, Search=PostSearch)
 
         if ErrCode == PTT.ErrorCode.PostDeleted:
 
@@ -98,7 +119,7 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
         RetryIndex = 0
         for i in range(1, 20):
 
-            ErrCode, LastPost = PTTBot.getPost(Board, PostIndex=CurrentIndex - i)
+            ErrCode, LastPost = PTTBot.getPost(Board, PostIndex=CurrentIndex - i, SearchType=PostSearchType, Search=PostSearch)
 
             if ErrCode == PTT.ErrorCode.PostDeleted:
                 pass
@@ -146,6 +167,12 @@ HistoryList = dict()
 
 
 def findCurrentDateFirst(NewestIndex, DayAgo, show=False):
+
+    global PTTBot
+    global Board
+    global SearchType
+    global Search
+    global Moderators
     
     global HistoryList
 
@@ -167,7 +194,12 @@ def findCurrentDateFirst(NewestIndex, DayAgo, show=False):
     while True:
         if show:
             PTTBot.Log('嘗試: ' + str(CurrentIndex))
-        ErrCode, Post_1 = PTTBot.getPost(Board, PostIndex=CurrentIndex)
+            print('Board:', Board)
+            print('CurrentIndex:', CurrentIndex)
+            print('PostSearchType:', PostSearchType)
+            print('PostSearch:', PostSearch)
+
+        ErrCode, Post_1 = PTTBot.getPost(Board, PostIndex=CurrentIndex, SearchType=PostSearchType, Search=PostSearch)
 
         if ErrCode == PTT.ErrorCode.PostDeleted:
             pass
@@ -185,7 +217,10 @@ def findCurrentDateFirst(NewestIndex, DayAgo, show=False):
         for i in range(1, 40):
 
             ErrCode, Post_0 = PTTBot.getPost(Board, 
-                                             PostIndex=CurrentIndex - i)
+                                             PostIndex=CurrentIndex - i,
+                                             SearchType=PostSearchType, 
+                                             Search=PostSearch
+                                             )
 
             if ErrCode == PTT.ErrorCode.PostDeleted:
                 pass
@@ -206,6 +241,7 @@ def findCurrentDateFirst(NewestIndex, DayAgo, show=False):
         if len(CurrentDate_0) < 4:
             CurrentDate_0 = '0' + CurrentDate_0
         CurrentDate_1 = Post_1.getListDate().replace('/', '').strip()
+
         if len(CurrentDate_1) < 4:
             CurrentDate_1 = '0' + CurrentDate_1
         
@@ -230,7 +266,16 @@ def findCurrentDateFirst(NewestIndex, DayAgo, show=False):
         
 
 def findPostRrange(DayAgo, show=False):
-    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board)
+    global PTTBot
+    global Board
+    global SearchType
+    global Search
+    global Moderators
+
+    # print('Board:', Board)
+    # print('SearchType:', SearchType)
+    # print('Search:', Search)
+    ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board, SearchType=PostSearchType, Search=PostSearch)
 
     if ErrCode != PTT.ErrorCode.Success:
         PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
@@ -239,7 +284,7 @@ def findPostRrange(DayAgo, show=False):
     if NewestIndex == -1:
         PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
         sys.exit()
-    
+
     Start = findCurrentDateFirst(NewestIndex, DayAgo, show=False)
     End = findCurrentDateFirst(NewestIndex, DayAgo - 1, show=False) - 1
 
