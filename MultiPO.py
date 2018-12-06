@@ -34,7 +34,8 @@ def PostHandler(Post):
     elif DeleteStatus == PTT.PostDeleteStatus.ByModerator:
         Title = '(本文已被刪除) <' + Author + '>'
     elif DeleteStatus == PTT.PostDeleteStatus.ByUnknow:
-        Title = '(本文已被刪除) <' + Author + '>'
+        # Title = '(本文已被刪除) <' + Author + '>'
+        pass
 
     if Title is None:
         Title = ''
@@ -172,7 +173,7 @@ if __name__ == '__main__':
         Title = CurrentDate + ' 汪踢板多PO結果'
 
         Content = '此封信內容由汪踢自動抓多 PO 程式產生' + NewLine + '共耗時 ' + str(int(EndTime - StartTime)) + ' 秒執行完畢' + NewLine
-        Content += '蒐集範圍為編號 ' + str(Start) + ' ~ ' + str(End) + NewLine + NewLine
+        Content += '蒐集範圍為ALLPOST搜尋(Wanted)情況下編號 ' + str(Start) + ' ~ ' + str(End) + NewLine + NewLine
 
         if MultiPOResult != '':
             Content += MultiPOResult
