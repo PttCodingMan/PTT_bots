@@ -66,7 +66,7 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
     
-    PTTBot = PTT.Library(kickOtherLogin=False)
+    PTTBot = PTT.Library(kickOtherLogin=True)
     Util.PTTBot = PTTBot
 
     while True:
@@ -151,7 +151,8 @@ if __name__ == '__main__':
                 continue
             # print('=' * 5 + ' ' + Suspect + ' ' + '=' * 5)
 
-            MultiPOResult += NewLine
+            if MultiPOResult != '':
+                MultiPOResult += NewLine
             for Title in TitleAuthorList:
                 MultiPOResult += '>   ' + CurrentDate + ' ' + Suspect + '     □ ' + Title + NewLine
         
@@ -183,7 +184,7 @@ if __name__ == '__main__':
         if IPResult != '':
             Content += IPResult
         else:
-            Content += '沒有發現特定 IP 有四篇以上文章' + NewLine
+            Content += NewLine + '沒有發現特定 IP 有四篇以上文章' + NewLine
 
         Content += NewLine + '內容如有失準，歡迎告知。' + NewLine
         MailContent = Content

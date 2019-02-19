@@ -160,13 +160,13 @@ def getDate(TimeDel, PTTSytle=True):
     PassDate = PassDay.strftime("%m/%d")
     # print('>' + PassDate + '<')
     if PTTSytle and PassDate.startswith('0'):
-        PassDate = LastDate[1:]
+        PassDate = PassDate[1:]
     return PassDate
 
 HistoryList = dict()
 
 
-def findCurrentDateFirst(NewestIndex, DayAgo, show=False):
+def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
 
     global PTTBot
     global Board
@@ -241,10 +241,8 @@ def findCurrentDateFirst(NewestIndex, DayAgo, show=False):
         if len(CurrentDate_0) < 4:
             CurrentDate_0 = '0' + CurrentDate_0
         CurrentDate_1 = Post_1.getListDate().replace('/', '').strip()
-
         if len(CurrentDate_1) < 4:
-            CurrentDate_1 = '0' + CurrentDate_1
-        
+            CurrentDate_1 = '0' + CurrentDate_1        
         CurrentTarget = int(CurrentDate_0 + CurrentDate_1)
 
         if show:
@@ -258,7 +256,11 @@ def findCurrentDateFirst(NewestIndex, DayAgo, show=False):
         if CurrentTarget == FinishTarget:
             HistoryList[str(DayAgo)] = CurrentIndex
             return CurrentIndex
-        if CurrentTarget > FinishTarget:
+        
+        if BiggestTarget < CurrentTarget:
+            # 表示 CurrentTarget 是去年的日期
+            StartIndex = CurrentIndex + 1
+        elif CurrentTarget > FinishTarget:
             EndIndex = CurrentIndex - 1  
         elif CurrentTarget < FinishTarget:
             StartIndex = CurrentIndex + 1
@@ -271,10 +273,12 @@ def findPostRrange(DayAgo, show=False):
     global SearchType
     global Search
     global Moderators
+    global PostSearchType
+    global PostSearch
 
     # print('Board:', Board)
-    # print('SearchType:', SearchType)
-    # print('Search:', Search)
+    # print('SearchType:', PostSearchType)
+    # print('Search:', PostSearch)
     ErrCode, NewestIndex = PTTBot.getNewestIndex(Board=Board, SearchType=PostSearchType, Search=PostSearch)
 
     if ErrCode != PTT.ErrorCode.Success:
@@ -284,9 +288,30 @@ def findPostRrange(DayAgo, show=False):
     if NewestIndex == -1:
         PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
         sys.exit()
+    PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
 
-    Start = findCurrentDateFirst(NewestIndex, DayAgo, show=False)
-    End = findCurrentDateFirst(NewestIndex, DayAgo - 1, show=False) - 1
+    ErrCode, Post = PTTBot.getPost(Board, PostIndex=NewestIndex, SearchType=PostSearchType, Search=PostSearch)
+
+    if ErrCode == PTT.ErrorCode.PostDeleted:
+        pass
+    elif ErrCode != PTT.ErrorCode.Success:
+        PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+        sys.exit()
+    elif Post.getDate() is None:
+        PTTBot.Log('使用文章編號取得文章日期失敗 錯誤碼: ' + str(ErrCode))
+        sys.exit()
+    
+    CurrentDate_0 = Post.getListDate().replace('/', '').strip()
+    if len(CurrentDate_0) < 4:
+        CurrentDate_0 = '0' + CurrentDate_0
+    CurrentDate_1 = CurrentDate_0
+    if len(CurrentDate_1) < 4:
+        CurrentDate_1 = '0' + CurrentDate_1
+    
+    BiggestTarget = int(CurrentDate_0 + CurrentDate_1)
+
+    Start = findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=True)
+    End = findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo - 1, show=False) - 1
 
     if show:
         print('Result', Start, End)
