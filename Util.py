@@ -257,9 +257,33 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
             HistoryList[str(DayAgo)] = CurrentIndex
             return CurrentIndex
         
-        if BiggestTarget < CurrentTarget:
+        # StartIndex : 上界
+        # CurrentTarget: 旗標的日期
+        # FinishTarget: 目標
+        # ==================
+        # EndIndex : 下界        
+        
+        if BiggestTarget < CurrentTarget or BiggestTarget < FinishTarget:
             # 表示 CurrentTarget 是去年的日期
-            StartIndex = CurrentIndex + 1
+            # 現在就需要知道目標是不是去年的日期
+
+            if BiggestTarget < FinishTarget:
+                # StartIndex : 上界
+                # CurrentTarget: 旗標的日期
+                # FinishTarget: 目標
+                # ==================
+                # EndIndex : 下界     
+                if CurrentTarget > FinishTarget:
+                    EndIndex = CurrentIndex - 1  
+                elif CurrentTarget < FinishTarget:
+                    StartIndex = CurrentIndex + 1
+            else:
+                # StartIndex : 上界
+                # CurrentTarget: 旗標的日期
+                # ==================
+                # FinishTarget: 目標
+                # EndIndex : 下界
+                StartIndex = CurrentIndex + 1
         elif CurrentTarget > FinishTarget:
             EndIndex = CurrentIndex - 1  
         elif CurrentTarget < FinishTarget:
