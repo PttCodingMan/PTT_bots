@@ -109,12 +109,14 @@ if __name__ == '__main__':
 
         if not Test:
 
-            ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard(Util.Board, PostHandler, 
-                                                                   StartIndex=Start, 
-                                                                   EndIndex=End,
-                                                                   SearchType=Util.PostSearchType, 
-                                                                   Search=Util.PostSearch
-                                                                   )
+            ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard(
+                Util.Board, 
+                PostHandler, 
+                StartIndex=Start, 
+                EndIndex=End,
+                SearchType=Util.PostSearchType, 
+                Search=Util.PostSearch
+            )
             if ErrCode != PTT.ErrorCode.Success:
                 PTTBot.Log('爬行失敗')
                 sys.exit()
@@ -174,6 +176,8 @@ if __name__ == '__main__':
         Title = CurrentDate + ' 汪踢板多PO結果'
 
         Content = '此封信內容由汪踢自動抓多 PO 程式產生' + NewLine + '共耗時 ' + str(int(EndTime - StartTime)) + ' 秒執行完畢' + NewLine
+        Content += '此程式由 CodingMan 所開發，' + NewLine
+        Content += '程式碼在 https://github.com/Truth0906/WantedTool' + NewLine
         Content += '蒐集範圍為ALLPOST搜尋(Wanted)情況下編號 ' + str(Start) + ' ~ ' + str(End) + NewLine + NewLine
 
         if MultiPOResult != '':

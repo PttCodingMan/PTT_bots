@@ -20,7 +20,7 @@
 
 執行
 ```
-python 多PO.py
+python MultiPO.py
 ```
 
 需求

@@ -260,8 +260,7 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
         # StartIndex : 上界
         # CurrentTarget: 旗標的日期
         # FinishTarget: 目標
-        # ==================
-        # EndIndex : 下界        
+        # EndIndex : 下界
         
         if BiggestTarget < CurrentTarget or BiggestTarget < FinishTarget:
             # 表示 CurrentTarget 是去年的日期
@@ -271,7 +270,7 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
                 # StartIndex : 上界
                 # CurrentTarget: 旗標的日期
                 # FinishTarget: 目標
-                # ==================
+                # =========跨年分隔線=========
                 # EndIndex : 下界     
                 if CurrentTarget > FinishTarget:
                     EndIndex = CurrentIndex - 1  
@@ -280,7 +279,7 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
             else:
                 # StartIndex : 上界
                 # CurrentTarget: 旗標的日期
-                # ==================
+                # =========跨年分隔線=========
                 # FinishTarget: 目標
                 # EndIndex : 下界
                 StartIndex = CurrentIndex + 1
