@@ -1,8 +1,9 @@
-# WantedTool
+# PTTModeratorTool
 
 
-###### PTT Wanted 管理工具 是一套由 Python 寫成，試圖降低大量的管版工作量而誕生的。
+###### PTTModeratorTool 是一套由 Python 寫成，試圖降低大量的管版工作量而誕生的。
 ###### 已上線: 
+###### 汪踢
 ###### 板規 4: 抓多 PO 機器人，可自動寄信給版主群
 
 
