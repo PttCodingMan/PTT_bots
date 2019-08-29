@@ -66,7 +66,7 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
     
-    PTTBot = PTT.Library(kickOtherLogin=True)
+    PTTBot = PTT.Library()
     Util.PTTBot = PTTBot
 
     while True:
@@ -74,19 +74,16 @@ if __name__ == '__main__':
             # HowManyDay = int(input('想從幾天前開始抓多PO?\n: '))
             HowManyDay = 1
             if HowManyDay < 1 or 30 < HowManyDay:
-                PTTBot.Log('輸入錯誤，請重新輸入 1 ~ 30')
+                PTTBot.log('輸入錯誤，請重新輸入 1 ~ 30')
                 continue
             break
         except:
-            PTTBot.Log('輸入錯誤，請重新輸入')
+            PTTBot.log('輸入錯誤，請重新輸入')
             continue
 
-    ErrCode = PTTBot.login(ID, Password)
-    if ErrCode != PTT.ErrorCode.Success:
-        PTTBot.Log('登入失敗')
-        sys.exit()
+    ErrCode = PTTBot.login(ID, Password, KickOtherLogin=True)
 
-    PTTBot.Log('從 ' + str(HowManyDay) + ' 天前開始抓多PO')
+    PTTBot.log('從 ' + str(HowManyDay) + ' 天前開始抓多PO')
 
     Result = ''
     NewLine = '\r\n'
@@ -100,10 +97,10 @@ if __name__ == '__main__':
         IPList = dict()
         CurrentDate = Util.getDate(dayAgo)
         
-        PTTBot.Log('開始 ' + str(dayAgo) + ' 天前的多PO偵測')
-        PTTBot.Log('日期: ' + CurrentDate)
+        PTTBot.log('開始 ' + str(dayAgo) + ' 天前的多PO偵測')
+        PTTBot.log('日期: ' + CurrentDate)
         Start, End = Util.findPostRrange(dayAgo, show=False)
-        PTTBot.Log('編號範圍 ' + str(Start) + ' ~ ' + str(End))
+        PTTBot.log('編號範圍 ' + str(Start) + ' ~ ' + str(End))
 
         # sys.exit()
 
@@ -118,7 +115,7 @@ if __name__ == '__main__':
                 Search=Util.PostSearch
             )
             if ErrCode != PTT.ErrorCode.Success:
-                PTTBot.Log('爬行失敗')
+                PTTBot.log('爬行失敗')
                 sys.exit()
         
         else:
@@ -127,19 +124,19 @@ if __name__ == '__main__':
                 ErrCode, Post = PTTBot.getPost(Util.Board, PostIndex=PostIndex, SearchType=Util.PostSearchType, Search=Util.PostSearch)
                 if ErrCode == PTT.ErrorCode.PostDeleted:
                     if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
-                        # PTTBot.Log('文章被原 PO 刪掉了')
+                        # PTTBot.log('文章被原 PO 刪掉了')
                         pass
                     elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
-                        # PTTBot.Log('文章被版主刪掉了')
+                        # PTTBot.log('文章被版主刪掉了')
                         pass
                     elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByUnknow:
-                        # PTTBot.Log('文章被刪掉了 in ALLPOST')
+                        # PTTBot.log('文章被刪掉了 in ALLPOST')
                         pass
 
                     PostHandler(Post)
                     continue
                 elif ErrCode != PTT.ErrorCode.Success:
-                    PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+                    PTTBot.log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
                     PostHandler(Post)
                     sys.exit()
                     continue
@@ -201,25 +198,25 @@ if __name__ == '__main__':
 
         # SendMail = input('請問寄出通知信給板主群？[Y/n] ').lower()
         # SendMail = (SendMail == 'y' or SendMail == '')
-        SendMail = True
-        TestBackup = True
+        SendMail = False
+        TestBackup = False
         # False True
         if SendMail:
             for Moderator in Util.Moderators:
                 ErrCode = PTTBot.mail(Moderator, Title, Content, 0)
                 if ErrCode == PTT.ErrorCode.Success:
-                    PTTBot.Log('寄信給 ' + Moderator + ' 成功')
+                    PTTBot.log('寄信給 ' + Moderator + ' 成功')
                 else:
-                    PTTBot.Log('寄信給 ' + Moderator + ' 失敗')
+                    PTTBot.log('寄信給 ' + Moderator + ' 失敗')
         else:
-            PTTBot.Log('取消寄信')
+            PTTBot.log('取消寄信')
         
         if TestBackup:
             ErrCode = PTTBot.post('Test', Title, MailContent, 1, 1)
             if ErrCode == PTT.ErrorCode.Success:
-                PTTBot.Log('在 Test 板發文成功')
+                PTTBot.log('在 Test 板發文成功')
             elif ErrCode == PTT.ErrorCode.NoPermission:
-                PTTBot.Log('發文權限不足')
+                PTTBot.log('發文權限不足')
             else:
-                PTTBot.Log('在 Test 板發文失敗')
+                PTTBot.log('在 Test 板發文失敗')
     PTTBot.logout()
