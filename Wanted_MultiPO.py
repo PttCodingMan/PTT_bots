@@ -1,5 +1,6 @@
 
-import sys, os
+import sys
+import os
 import time
 import json
 import getpass
@@ -40,13 +41,13 @@ def PostHandler(Post):
     if Title is None:
         Title = ''
     # Title is OK
-    
+
     if Author not in AuthorList:
         AuthorList[Author] = []
 
     if IP is not None and IP not in IPList:
         IPList[IP] = []
-        
+
     if DeleteStatus == PTT.PostDeleteStatus.NotDeleted:
         if '[公告]' in Title:
             return
@@ -54,7 +55,7 @@ def PostHandler(Post):
             IPList[IP].append(Author + '     □ ' + Title)
 
     AuthorList[Author].append(Title)
-    
+
 
 if __name__ == '__main__':
     try:
@@ -65,8 +66,10 @@ if __name__ == '__main__':
     except FileNotFoundError:
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
-    
-    PTTBot = PTT.Library()
+
+    PTTBot = PTT.Library(
+        # LogLevel=PTT.Log.Level.DEBUG
+    )
     Util.PTTBot = PTTBot
 
     while True:
@@ -96,7 +99,7 @@ if __name__ == '__main__':
         AuthorList = dict()
         IPList = dict()
         CurrentDate = Util.getDate(dayAgo)
-        
+
         PTTBot.log('開始 ' + str(dayAgo) + ' 天前的多PO偵測')
         PTTBot.log('日期: ' + CurrentDate)
         Start, End = Util.findPostRrange(dayAgo, show=False)
@@ -106,22 +109,20 @@ if __name__ == '__main__':
 
         if not Test:
 
-            ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard(
-                Util.Board, 
-                PostHandler, 
-                StartIndex=Start, 
+            ErrorPostList, DeleteCount = PTTBot.crawlBoard(
+                PostHandler,
+                Util.Board,
+                StartIndex=Start,
                 EndIndex=End,
-                SearchType=Util.PostSearchType, 
-                Search=Util.PostSearch
+                SearchType=Util.PostSearchType,
+                SearchCondition=Util.PostSearch
             )
-            if ErrCode != PTT.ErrorCode.Success:
-                PTTBot.log('爬行失敗')
-                sys.exit()
-        
+
         else:
 
             for PostIndex in range(Start, End + 1):
-                ErrCode, Post = PTTBot.getPost(Util.Board, PostIndex=PostIndex, SearchType=Util.PostSearchType, Search=Util.PostSearch)
+                ErrCode, Post = PTTBot.getPost(
+                    Util.Board, PostIndex=PostIndex, SearchType=Util.PostSearchType, SearchCondition=Util.PostSearch)
                 if ErrCode == PTT.ErrorCode.PostDeleted:
                     if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
                         # PTTBot.log('文章被原 PO 刪掉了')
@@ -142,10 +143,10 @@ if __name__ == '__main__':
                     continue
 
                 PostHandler(Post)
-            
+
         MultiPOResult = ''
         for Suspect, TitleAuthorList in AuthorList.items():
-            
+
             if len(TitleAuthorList) < 4:
                 continue
             # print('=' * 5 + ' ' + Suspect + ' ' + '=' * 5)
@@ -153,35 +154,39 @@ if __name__ == '__main__':
             if MultiPOResult != '':
                 MultiPOResult += NewLine
             for Title in TitleAuthorList:
-                MultiPOResult += '>   ' + CurrentDate + ' ' + Suspect + '     □ ' + Title + NewLine
-        
+                MultiPOResult += '>   ' + CurrentDate + ' ' + \
+                    Suspect + '     □ ' + Title + NewLine
+
         IPResult = ''
         for IP, SuspectList in IPList.items():
             # print('len:', len(SuspectList))
             if len(SuspectList) <= 3:
                 continue
-            
+
             # print('IP:', IP)
             IPResult += 'IP: ' + IP + NewLine
-        
+
             for Line in SuspectList:
                 # print('>   ' + CurrentDate + ' ' + Line)
                 IPResult += '>   ' + CurrentDate + ' ' + Line + NewLine
-        
+
         EndTime = time.time()
-        
+
         Title = CurrentDate + ' 汪踢板多PO結果'
 
-        Content = '此封信內容由汪踢自動抓多 PO 程式產生' + NewLine + '共耗時 ' + str(int(EndTime - StartTime)) + ' 秒執行完畢' + NewLine
-        Content += '此程式由 CodingMan 所開發，' + NewLine
-        Content += '程式碼在 https://github.com/Truth0906/WantedTool' + NewLine
-        Content += '蒐集範圍為ALLPOST搜尋(Wanted)情況下編號 ' + str(Start) + ' ~ ' + str(End) + NewLine + NewLine
+        Content = '此封信內容由汪踢自動抓多 PO 程式產生' + NewLine + '共耗時 ' + \
+            str(int(EndTime - StartTime)) + ' 秒執行完畢' + NewLine * 2
+        Content += '此程式是由 CodingMan 透過 PTT Library 開發，' + NewLine * 2
+        Content += 'PTT Library: https://github.com/Truth0906/PTTLibrary' + NewLine
+        Content += '開發指南: https://hackmd.io/@CodingMan/PTTLibraryManual' + NewLine * 2
+        Content += '蒐集範圍為ALLPOST搜尋(Wanted)情況下編號 ' + \
+            str(Start) + ' ~ ' + str(End) + NewLine + NewLine
 
         if MultiPOResult != '':
             Content += MultiPOResult
         else:
             Content += CurrentDate + '無人違反多PO板規' + NewLine
-        
+
         if IPResult != '':
             Content += IPResult
         else:
@@ -198,25 +203,17 @@ if __name__ == '__main__':
 
         # SendMail = input('請問寄出通知信給板主群？[Y/n] ').lower()
         # SendMail = (SendMail == 'y' or SendMail == '')
-        SendMail = False
-        TestBackup = False
+        SendMail = True
+        TestBackup = True
         # False True
         if SendMail:
             for Moderator in Util.Moderators:
-                ErrCode = PTTBot.mail(Moderator, Title, Content, 0)
-                if ErrCode == PTT.ErrorCode.Success:
-                    PTTBot.log('寄信給 ' + Moderator + ' 成功')
-                else:
-                    PTTBot.log('寄信給 ' + Moderator + ' 失敗')
+                PTTBot.mail(Moderator, Title, Content, 0)
+                PTTBot.log('寄信給 ' + Moderator + ' 成功')
         else:
             PTTBot.log('取消寄信')
-        
+
         if TestBackup:
-            ErrCode = PTTBot.post('Test', Title, MailContent, 1, 1)
-            if ErrCode == PTT.ErrorCode.Success:
-                PTTBot.log('在 Test 板發文成功')
-            elif ErrCode == PTT.ErrorCode.NoPermission:
-                PTTBot.log('發文權限不足')
-            else:
-                PTTBot.log('在 Test 板發文失敗')
+            PTTBot.post('Test', Title, MailContent, 1, 1)
+            PTTBot.log('在 Test 板發文成功')
     PTTBot.logout()

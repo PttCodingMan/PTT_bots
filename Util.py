@@ -25,11 +25,11 @@ def getToday():
     )
 
     if ErrCode != PTT.ErrorCode.Success:
-        PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+        PTTBot.log('取得 ' + Board + ' 板最新文章編號失敗')
         sys.exit()
 
     if NewestIndex == -1:
-        PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+        PTTBot.log('取得 ' + Board + ' 板最新文章編號失敗')
         sys.exit()
 
     for i in range(20):
@@ -43,15 +43,15 @@ def getToday():
 
         if ErrCode == PTT.ErrorCode.PostDeleted:
             # if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
-            #     # PTTBot.Log('文章被原 PO 刪掉了')
+            #     # PTTBot.log('文章被原 PO 刪掉了')
             #     pass
             # elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
-            #     # PTTBot.Log('文章被版主刪掉了')
+            #     # PTTBot.log('文章被版主刪掉了')
             #     pass
             # continue
             pass
         elif ErrCode != PTT.ErrorCode.Success:
-            PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+            PTTBot.log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
             continue
 
         NewestIndex = NewestIndex - i
@@ -75,16 +75,16 @@ def getYesterDay(TodayOldestIndex):
     for i in range(1, 20):
 
         ErrCode, Post = PTTBot.getPost(
-            Board, PostIndex=TodayOldestIndex - i, SearchType=PostSearchType, Search=PostSearch)
+            Board, PostIndex=TodayOldestIndex - i, SearchType=PostSearchType, SearchCondition=PostSearch)
 
         if ErrCode == PTT.ErrorCode.PostDeleted:
             if Post.getDeleteStatus() == PTT.PostDeleteStatus.ByAuthor:
-                PTTBot.Log('文章被原 PO 刪掉了')
+                PTTBot.log('文章被原 PO 刪掉了')
             elif Post.getDeleteStatus() == PTT.PostDeleteStatus.ByModerator:
-                PTTBot.Log('文章被版主刪掉了')
+                PTTBot.log('文章被版主刪掉了')
             # continue
         elif ErrCode != PTT.ErrorCode.Success:
-            PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+            PTTBot.log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
             continue
         ResultIndex = TodayOldestIndex - i
         break
@@ -109,16 +109,16 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
 
     while True:
         if show:
-            PTTBot.Log('嘗試: ' + str(CurrentIndex))
+            PTTBot.log('嘗試: ' + str(CurrentIndex))
 
         ErrCode, Post = PTTBot.getPost(
-            Board, PostIndex=CurrentIndex, SearchType=PostSearchType, Search=PostSearch)
+            Board, PostIndex=CurrentIndex, SearchType=PostSearchType, SearchCondition=PostSearch)
 
         if ErrCode == PTT.ErrorCode.PostDeleted:
 
             pass
         elif ErrCode != PTT.ErrorCode.Success:
-            PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+            PTTBot.log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
             CurrentIndex = StartIndex + RetryIndex
             RetryIndex += 1
             continue
@@ -131,13 +131,13 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
         for i in range(1, 20):
 
             ErrCode, LastPost = PTTBot.getPost(
-                Board, PostIndex=CurrentIndex - i, SearchType=PostSearchType, Search=PostSearch)
+                Board, PostIndex=CurrentIndex - i, SearchType=PostSearchType, SearchCondition=PostSearch)
 
             if ErrCode == PTT.ErrorCode.PostDeleted:
                 pass
             elif ErrCode != PTT.ErrorCode.Success:
                 if show:
-                    PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
+                    PTTBot.log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
                 continue
             elif LastPost is None:
                 continue
@@ -145,7 +145,7 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
                 continue
 
             if show:
-                PTTBot.Log('找到上一篇: ' + str(CurrentIndex - i))
+                PTTBot.log('找到上一篇: ' + str(CurrentIndex - i))
 
             break
         CurrentToday = Post.getListDate()
@@ -207,52 +207,52 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
 
     while True:
         if show:
-            PTTBot.Log('嘗試: ' + str(CurrentIndex))
+            PTTBot.log('嘗試: ' + str(CurrentIndex))
             print('Board:', Board)
             print('CurrentIndex:', CurrentIndex)
             print('PostSearchType:', PostSearchType)
             print('PostSearch:', PostSearch)
 
-        ErrCode, Post_1 = PTTBot.getPost(
-            Board, PostIndex=CurrentIndex, SearchType=PostSearchType, Search=PostSearch)
+        Post_1 = PTTBot.getPost(
+            Board,
+            PostIndex=CurrentIndex,
+            SearchType=PostSearchType,
+            SearchCondition=PostSearch
+        )
 
-        if ErrCode == PTT.ErrorCode.PostDeleted:
-            pass
-        elif ErrCode != PTT.ErrorCode.Success:
-            PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
-            CurrentIndex = StartIndex + RetryIndex
-            RetryIndex += 1
-            continue
-        elif Post_1.getDate() is None:
+        if Post_1.getDate() is None:
             CurrentIndex = StartIndex + RetryIndex
             RetryIndex += 1
             continue
 
+        Post_0 = None
         RetryIndex = 0
         for i in range(1, 40):
 
-            ErrCode, Post_0 = PTTBot.getPost(Board,
-                                             PostIndex=CurrentIndex - i,
-                                             SearchType=PostSearchType,
-                                             Search=PostSearch
-                                             )
+            if CurrentIndex - i <= 0:
+                break
 
-            if ErrCode == PTT.ErrorCode.PostDeleted:
-                pass
-            elif ErrCode != PTT.ErrorCode.Success:
-                if show:
-                    PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
-                continue
-            elif Post_0 is None:
+            Post_0 = PTTBot.getPost(
+                Board,
+                PostIndex=(CurrentIndex - i),
+                SearchType=PostSearchType,
+                SearchCondition=PostSearch
+            )
+
+            if Post_0 is None:
                 continue
             elif Post_0.getDate() is None:
                 continue
 
             if show:
-                PTTBot.Log('找到上一篇: ' + str(CurrentIndex - i))
-
+                PTTBot.log('找到上一篇: ' + str(CurrentIndex - i))
             break
-        CurrentDate_0 = Post_0.getListDate().replace('/', '').strip()
+
+        if Post_0 is None:
+            CurrentDate_0 = '0000'
+        else:
+            CurrentDate_0 = Post_0.getListDate().replace('/', '').strip()
+
         if len(CurrentDate_0) < 4:
             CurrentDate_0 = '0' + CurrentDate_0
         CurrentDate_1 = Post_1.getListDate().replace('/', '').strip()
@@ -325,21 +325,16 @@ def findPostRrange(DayAgo, show=False):
     )
 
     if NewestIndex == -1:
-        PTTBot.Log('取得 ' + Board + ' 板最新文章編號失敗')
+        PTTBot.log('取得 ' + Board + ' 板最新文章編號失敗')
         sys.exit()
-    PTTBot.Log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
+    PTTBot.log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
 
-    ErrCode, Post = PTTBot.getPost(
-        Board, PostIndex=NewestIndex, SearchType=PostSearchType, Search=PostSearch)
-
-    if ErrCode == PTT.ErrorCode.PostDeleted:
-        pass
-    elif ErrCode != PTT.ErrorCode.Success:
-        PTTBot.Log('使用文章編號取得文章詳細資訊失敗 錯誤碼: ' + str(ErrCode))
-        sys.exit()
-    elif Post.getDate() is None:
-        PTTBot.Log('使用文章編號取得文章日期失敗 錯誤碼: ' + str(ErrCode))
-        sys.exit()
+    Post = PTTBot.getPost(
+        Board,
+        PostIndex=NewestIndex,
+        SearchType=PostSearchType,
+        SearchCondition=PostSearch
+    )
 
     CurrentDate_0 = Post.getListDate().replace('/', '').strip()
     if len(CurrentDate_0) < 4:
