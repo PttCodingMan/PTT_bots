@@ -66,8 +66,6 @@ def getToday():
 def getYesterDay(TodayOldestIndex):
     global PTTBot
     global Board
-    global SearchType
-    global Search
     global Moderators
 
     ResultIndex = 0
@@ -95,8 +93,6 @@ def getYesterDay(TodayOldestIndex):
 def findFirstIndex(NewestIndex, Todaty, show=False):
     global PTTBot
     global Board
-    global SearchType
-    global Search
     global Moderators
 
     StartIndex = 1
@@ -183,14 +179,12 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
 
     global PTTBot
     global Board
-    global SearchType
-    global Search
     global Moderators
 
-    global HistoryList
+    # global HistoryList
 
-    if str(DayAgo) in HistoryList:
-        return HistoryList[str(DayAgo)]
+    # if str(DayAgo) in HistoryList:
+    #     return HistoryList[str(DayAgo)]
 
     CurrentDate_0 = getDate(
         DayAgo + 1, PTTSytle=False).replace('/', '').strip()
@@ -201,8 +195,6 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
     EndIndex = NewestIndex
 
     CurrentIndex = int((StartIndex + EndIndex) / 2)
-    CurrentToday = ''
-    LastCurrentToday = ''
     RetryIndex = 0
 
     while True:

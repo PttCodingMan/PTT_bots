@@ -59,7 +59,7 @@ def PostHandler(Post):
     AuthorList[Author].append(Title)
 
 
-def MultiPO(Board, Moderators, MaxPost, Mail=True, BackTest=True):
+def MultiPO(Board, Moderators, MaxPost, Publish):
     
     global AuthorList
     global IPList
@@ -157,7 +157,7 @@ def MultiPO(Board, Moderators, MaxPost, Mail=True, BackTest=True):
         Content += '此程式是由 CodingMan 透過 PTT Library 開發，' + NewLine * 2
         Content += 'PTT Library: https://github.com/Truth0906/PTTLibrary' + NewLine
         Content += '開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual' + NewLine * 2
-        Content += f'蒐集範圍為ALLPOST搜尋({Board})情況下編號 ' + \
+        Content += f'蒐集範圍為 ALLPOST 搜尋 ({Board}) 情況下編號 ' + \
             str(Start) + ' ~ ' + str(End) + NewLine + NewLine
 
         if MultiPOResult != '':
@@ -180,14 +180,25 @@ def MultiPO(Board, Moderators, MaxPost, Mail=True, BackTest=True):
         print(Content)
 
         # False True
-        if Mail:
+        if Publish:
             for Moderator in Util.Moderators:
                 PTTBot.mail(Moderator, Title, Content, 0)
                 PTTBot.log('寄信給 ' + Moderator + ' 成功')
         else:
             PTTBot.log('取消寄信')
 
-        if BackTest:
-            PTTBot.post('Test', Title, MailContent, 1, 1)
+        if Publish:
+            PTTBot.post('Test', Title, MailContent, 1, 0)
             PTTBot.log('在 Test 板發文成功')
     PTTBot.logout()
+
+if __name__ == '__main__':
+
+    SearchList = [
+        # ('Wanted', ['gogin'], 3, False),
+        # ('give', ['gogin'], 3, False),
+        ('Gossiping', ['Bignana'], 5, False),
+    ]
+
+    for (Board, ModeratorList, MaxPost, Publish) in SearchList:
+        MultiPO(Board, ModeratorList, MaxPost, Publish)
