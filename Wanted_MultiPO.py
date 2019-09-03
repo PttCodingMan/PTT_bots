@@ -178,7 +178,7 @@ if __name__ == '__main__':
             str(int(EndTime - StartTime)) + ' 秒執行完畢' + NewLine * 2
         Content += '此程式是由 CodingMan 透過 PTT Library 開發，' + NewLine * 2
         Content += 'PTT Library: https://github.com/Truth0906/PTTLibrary' + NewLine
-        Content += '開發指南: https://hackmd.io/@CodingMan/PTTLibraryManual' + NewLine * 2
+        Content += '開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual' + NewLine * 2
         Content += '蒐集範圍為ALLPOST搜尋(Wanted)情況下編號 ' + \
             str(Start) + ' ~ ' + str(End) + NewLine + NewLine
 
