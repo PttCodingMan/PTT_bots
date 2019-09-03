@@ -8,7 +8,7 @@ PTTBot = None
 Board = 'ALLPOST'
 PostSearchType = PTT.PostSearchType.Keyword
 PostSearch = '(Wanted)'
-Moderators = ['gogin', 'LittleCalf']
+Moderators = ['gogin']
 
 
 def getToday():
@@ -122,7 +122,7 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
             CurrentIndex = StartIndex + RetryIndex
             RetryIndex += 1
             continue
-        elif Post.getDate() is None:
+        elif Post.getListDate() is None:
             CurrentIndex = StartIndex + RetryIndex
             RetryIndex += 1
             continue
@@ -141,7 +141,7 @@ def findFirstIndex(NewestIndex, Todaty, show=False):
                 continue
             elif LastPost is None:
                 continue
-            elif LastPost.getDate() is None:
+            elif LastPost.getListDate() is None:
                 continue
 
             if show:
@@ -220,7 +220,7 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
             SearchCondition=PostSearch
         )
 
-        if Post_1.getDate() is None:
+        if Post_1.getListDate() is None:
             CurrentIndex = StartIndex + RetryIndex
             RetryIndex += 1
             continue
@@ -241,7 +241,7 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
 
             if Post_0 is None:
                 continue
-            elif Post_0.getDate() is None:
+            elif Post_0.getListDate() is None:
                 continue
 
             if show:
