@@ -198,9 +198,9 @@ def MultiPO(Board, Moderators, MaxPost, Publish):
 if __name__ == '__main__':
 
     SearchList = [
-        # ('Gossiping', ['Bignana'], 5, False),
-        ('Wanted', ['gogin'], 3, True),
-        ('give', ['gogin'], 3, True),
+        ('Gossiping', ['Bignana'], 5, False),
+        # ('Wanted', ['gogin'], 3, False),
+        # ('give', ['gogin'], 3, False),
     ]
 
     for (Board, ModeratorList, MaxPost, Publish) in SearchList:
