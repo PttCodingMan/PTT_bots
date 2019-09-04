@@ -25,8 +25,8 @@ def PostHandler(Post):
 
     Author = Post.getAuthor()
     if '(' in Author:
-        Author = Author[:Author.find('(')]
-        Author = Author.rstrip()
+        Author = Author[:Author.find('(')].strip()
+    
     # Author is OK
     Title = Post.getTitle()
     DeleteStatus = Post.getDeleteStatus()
@@ -44,6 +44,8 @@ def PostHandler(Post):
         Title = ''
     # Title is OK
 
+    # print(f'==>{Author}<==>{Title}<')
+
     if Author not in AuthorList:
         AuthorList[Author] = []
 
@@ -60,7 +62,7 @@ def PostHandler(Post):
 
 
 def MultiPO(Board, Moderators, MaxPost, Publish):
-    
+
     global AuthorList
     global IPList
 
@@ -152,7 +154,7 @@ def MultiPO(Board, Moderators, MaxPost, Publish):
 
         Title = CurrentDate + f' {Board} 板多 PO 結果'
 
-        Content = '此封信內容由自動抓多 PO 程式產生' + NewLine + '共耗時 ' + \
+        Content = '此內容由自動抓多 PO 程式產生' + NewLine + '共耗時 ' + \
             str(int(EndTime - StartTime)) + ' 秒執行完畢' + NewLine * 2
         Content += '此程式是由 CodingMan 透過 PTT Library 開發，' + NewLine * 2
         Content += 'PTT Library: https://github.com/Truth0906/PTTLibrary' + NewLine
@@ -192,12 +194,13 @@ def MultiPO(Board, Moderators, MaxPost, Publish):
             PTTBot.log('在 Test 板發文成功')
     PTTBot.logout()
 
+
 if __name__ == '__main__':
 
     SearchList = [
-        # ('Wanted', ['gogin'], 3, False),
-        # ('give', ['gogin'], 3, False),
-        ('Gossiping', ['Bignana'], 5, False),
+        # ('Gossiping', ['Bignana'], 5, False),
+        ('Wanted', ['gogin'], 3, True),
+        ('give', ['gogin'], 3, True),
     ]
 
     for (Board, ModeratorList, MaxPost, Publish) in SearchList:

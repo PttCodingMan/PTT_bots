@@ -300,15 +300,14 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
 def findPostRrange(DayAgo, show=False):
     global PTTBot
     global Board
-    global SearchType
-    global Search
     global Moderators
     global PostSearchType
     global PostSearch
 
-    print('Board:', Board)
-    print('SearchType:', PostSearchType)
-    print('Search:', PostSearch)
+    if show:
+        print('Board:', Board)
+        print('SearchType:', PostSearchType)
+        print('Search:', PostSearch)
     NewestIndex = PTTBot.getNewestIndex(
         PTT.IndexType.Board,
         Board=Board,
@@ -337,7 +336,7 @@ def findPostRrange(DayAgo, show=False):
 
     BiggestTarget = int(CurrentDate_0 + CurrentDate_1)
 
-    Start = findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=True)
+    Start = findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False)
     End = findCurrentDateFirst(
         BiggestTarget, NewestIndex, DayAgo - 1, show=False) - 1
 
