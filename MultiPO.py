@@ -61,7 +61,7 @@ def PostHandler(Post):
     AuthorList[Author].append(Title)
 
 
-def MultiPO(Board, Moderators, MaxPost, Publish):
+def MultiPO(Board, Moderators, MaxPost, Ask):
 
     global AuthorList
     global IPList
@@ -160,9 +160,9 @@ def MultiPO(Board, Moderators, MaxPost, Publish):
 
         Content = '此內容由自動抓多 PO 程式產生' + NewLine
 
-        Content += '共耗時 '
+        Content += '共耗時'
         if Min > 0:
-            Content += f'{Min} 分'
+            Content += f' {Min} 分'
         Content += f' {Sec} 秒執行完畢' + NewLine * 2
 
         Content += '此程式是由 CodingMan 透過 PTT Library 開發，' + NewLine * 2
@@ -181,7 +181,7 @@ def MultiPO(Board, Moderators, MaxPost, Publish):
         if IPResult != '':
             Content += IPResult
         else:
-            Content += NewLine + f'沒有發現特定 IP 有 {MaxPost} 篇以上文章' + NewLine
+            Content += NewLine + f'沒有發現特定 IP 有 {MaxPost + 1} 篇以上文章' + NewLine
 
         Content += NewLine + '內容如有失準，歡迎告知。' + NewLine
         MailContent = Content
@@ -192,6 +192,11 @@ def MultiPO(Board, Moderators, MaxPost, Publish):
         print(Title)
         print(Content)
 
+        if Ask:
+            Choise = input('要發佈嗎? [Y]').lower()
+            Publish = (Choise == 'y') or (Choise == '')
+        else:
+            Publish = True
         # False True
         if Publish:
             for Moderator in Util.Moderators:
@@ -208,14 +213,15 @@ def MultiPO(Board, Moderators, MaxPost, Publish):
 
 if __name__ == '__main__':
 
-    Publish = False
+    Ask = True
 
     SearchList = [
-        # ('Gossiping', ['Bignana'], 5, Publish),
-        ('Stock', ['eyespot', 'noldorelf'], 5, Publish),
-        # ('Wanted', ['gogin'], 3, Publish),
-        # ('give', ['gogin'], 3, Publish),
-        # ('Movie', ['hhwang', 'kai3368'], 3, Publish),
+        # ('Gossiping', ['Bignana'], 5, Ask),
+        # ('Stock', ['eyespot', 'noldorelf'], 5, Ask),
+        # ('Wanted', ['gogin'], 3, Ask),
+        # ('give', ['gogin'], 3, Ask),
+        # ('Movie', ['hhwang', 'kai3368'], 3, Ask),
+        ('WomenTalk', ['Assisi', 'lturtsamuel', 'flower42'], 3, Ask),
     ]
 
     for (Board, ModeratorList, MaxPost, Publish) in SearchList:
