@@ -74,12 +74,11 @@ def MultiPO(Board, Moderators, MaxPost):
     global PTTBot
     global Publish
     global Ask
+    global Mail
 
     Util.PTTBot = PTTBot
     Util.PostSearch = f'({Board})'
     Util.Moderators = Moderators
-
-    Result = ''
 
     global PublishContent
     if PublishContent is None:
@@ -122,8 +121,8 @@ def MultiPO(Board, Moderators, MaxPost):
         if MultiPOResult != '':
             MultiPOResult += NewLine
         for Title in TitleAuthorList:
-            MultiPOResult += '>   ' + CurrentDate + ' ' + \
-                Suspect + '     □ ' + Title + NewLine
+            MultiPOResult += CurrentDate + ' ' + \
+                Suspect + ' □ ' + Title + NewLine
 
     IPResult = ''
     for IP, SuspectList in IPList.items():
@@ -136,7 +135,7 @@ def MultiPO(Board, Moderators, MaxPost):
 
         for Line in SuspectList:
             # print('>   ' + CurrentDate + ' ' + Line)
-            IPResult += '>   ' + CurrentDate + ' ' + Line + NewLine
+            IPResult += CurrentDate + ' ' + Line + NewLine
 
     EndTime = time.time()
 
@@ -164,32 +163,31 @@ def MultiPO(Board, Moderators, MaxPost):
         str(Start) + ' ~ ' + str(End) + NewLine
     Content += f'共 {End - Start + 1} 篇文章' + NewLine * 2
 
-    PublishContent += f'\t蒐集範圍為 ALLPOST 搜尋 ({Board}) 情況下編號 ' + \
+    PublishContent += f'    蒐集範圍為 ALLPOST 搜尋 ({Board}) 情況下編號 ' + \
         str(Start) + ' ~ ' + str(End) + NewLine
-    PublishContent += f'\t共 {End - Start + 1} 篇文章' + NewLine * 2
+    PublishContent += f'    共 {End - Start + 1} 篇文章' + NewLine * 2
 
     if MultiPOResult != '':
         Content += MultiPOResult
 
         MultiPOResult = MultiPOResult.strip()
         for line in MultiPOResult.split(NewLine):
-            PublishContent += '\t' + line + NewLine
+            PublishContent += '    ' + line + NewLine
     else:
         Content += '◆ ' + CurrentDate + ' 無人違反多 PO 板規' + NewLine
-        PublishContent += '\t' + '◆ ' + CurrentDate + ' 無人違反多 PO 板規' + NewLine
+        PublishContent += '    ' + '◆ ' + CurrentDate + ' 無人違反多 PO 板規' + NewLine
 
     if IPResult != '':
         Content += IPResult
         IPResult = IPResult.strip()
         for line in IPResult.split(NewLine):
-            PublishContent += '\t' + line + NewLine
+            PublishContent += '    ' + line + NewLine
     else:
         Content += NewLine + f'◆ 沒有發現特定 IP 有 {MaxPost + 1} 篇以上文章' + NewLine
         PublishContent += NewLine + \
-            f'\t◆ 沒有發現特定 IP 有 {MaxPost + 1} 篇以上文章' + NewLine
+            f'    ◆ 沒有發現特定 IP 有 {MaxPost + 1} 篇以上文章' + NewLine
 
     Content += NewLine + '內容如有失準，歡迎告知。' + NewLine
-    MailContent = Content
     Content += '此訊息同步發送給 ' + ' '.join(Util.Moderators) + NewLine
     Content += NewLine
     Content += ID
@@ -202,12 +200,12 @@ def MultiPO(Board, Moderators, MaxPost):
         Publish = (Choise == 'y') or (Choise == '')
 
     # False True
-    if Publish:
+    if Mail:
         for Moderator in Util.Moderators:
             PTTBot.mail(Moderator, Title, Content, 0)
             PTTBot.log('寄信給 ' + Moderator + ' 成功')
     else:
-        PTTBot.log('取消發佈')
+        PTTBot.log('取消寄信')
 
 
 if __name__ == '__main__':
@@ -216,12 +214,12 @@ if __name__ == '__main__':
         ('Gossiping', ['Bignana'], 5),
         ('Wanted', ['gogin'], 3),
         ('give', ['gogin'], 3),
-        ('Movie', ['hhwang', 'kai3368'], 3),
-        ('Stock', ['eyespot', 'noldorelf'], 5),
+        ('HatePolitics', ['Neptunium', 'mark2165', 'kero2377'], 5),
     ]
 
-    Publish = True
     Ask = False
+    Publish = True
+    Mail = True
 
     try:
         with open('Account.txt') as AccountFile:
@@ -245,4 +243,6 @@ if __name__ == '__main__':
 
         PTTBot.post('Test', CurrentDate + ' 多 PO 結果', PublishContent, 1, 0)
         PTTBot.log('在 Test 板發文成功')
+    else:
+        PTTBot.log('取消備份')
     PTTBot.logout()
