@@ -13,8 +13,10 @@ from datetime import date, timedelta
 from PTTLibrary import PTT
 import Util
 
+Ask = False
+Publish = False
+Mail = False
 
-# Test = False
 AuthorList = dict()
 IPList = dict()
 PublishContent = None
@@ -216,10 +218,6 @@ if __name__ == '__main__':
         ('give', ['gogin'], 3),
         ('HatePolitics', ['Neptunium', 'mark2165', 'kero2377'], 5),
     ]
-
-    Ask = False
-    Publish = True
-    Mail = True
 
     try:
         with open('Account.txt') as AccountFile:
