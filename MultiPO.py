@@ -83,11 +83,12 @@ def MultiPO(Board, Moderators, MaxPost):
     global PublishContent
     if PublishContent is None:
 
-        PublishContent = '此內容由自動抓多 PO 程式產生' + NewLine
+        PublishContent = '此內容由抓多 PO 程式產生' + NewLine
         PublishContent += '由 CodingMan 透過 PTT Library 開發，' + NewLine * 2
 
         PublishContent += 'PTT Library: https://github.com/Truth0906/PTTLibrary' + NewLine
         PublishContent += '開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual' + NewLine
+        PublishContent += '抓多 PO 程式: https://github.com/Truth0906/PTTModeratorTool' + NewLine
 
     dayAgo = 1
 
@@ -148,7 +149,7 @@ def MultiPO(Board, Moderators, MaxPost):
     Min = int(Time / 60)
     Sec = int(Time % 60)
 
-    Content = '此內容由自動抓多 PO 程式產生' + NewLine
+    Content = '此內容由抓多 PO 程式產生' + NewLine
 
     Content += '共耗時'
     PublishContent += '共耗時'
@@ -199,7 +200,6 @@ def MultiPO(Board, Moderators, MaxPost):
         Choise = input('要發佈嗎? [Y]').lower()
         Publish = (Choise == 'y') or (Choise == '')
 
-    # False True
     if Mail:
         for Moderator in Util.Moderators:
             PTTBot.mail(Moderator, Title, Content, 0)
@@ -217,6 +217,7 @@ if __name__ == '__main__':
         ('HatePolitics', ['Neptunium', 'mark2165', 'kero2377'], 5),
     ]
 
+    # False True
     Ask = False
     Publish = True
     Mail = True

@@ -159,25 +159,39 @@ def findPostRrange(DayAgo, show=False):
         print('Board:', Board)
         print('SearchType:', PostSearchType)
         print('Search:', PostSearch)
-    NewestIndex = PTTBot.getNewestIndex(
-        PTT.IndexType.Board,
-        Board=Board,
-        SearchType=PostSearchType,
-        SearchCondition=PostSearch,
-    )
+
+    if PostSearch is not None:
+        NewestIndex = PTTBot.getNewestIndex(
+            PTT.IndexType.Board,
+            Board=Board,
+            SearchType=PostSearchType,
+            SearchCondition=PostSearch,
+        )
+    else:
+        NewestIndex = PTTBot.getNewestIndex(
+            PTT.IndexType.Board,
+            Board=Board,
+        )
 
     if NewestIndex == -1:
         PTTBot.log('取得 ' + Board + ' 板最新文章編號失敗')
         sys.exit()
     PTTBot.log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
 
-    Post = PTTBot.getPost(
-        Board,
-        PostIndex=NewestIndex,
-        SearchType=PostSearchType,
-        SearchCondition=PostSearch,
-        Query=True
-    )
+    if PostSearch is not None:
+        Post = PTTBot.getPost(
+            Board,
+            PostIndex=NewestIndex,
+            SearchType=PostSearchType,
+            SearchCondition=PostSearch,
+            Query=True
+        )
+    else:
+        Post = PTTBot.getPost(
+            Board,
+            PostIndex=NewestIndex,
+            Query=True
+        )
 
     CurrentDate_0 = Post.getListDate().replace('/', '').strip()
     if len(CurrentDate_0) < 4:
@@ -188,7 +202,8 @@ def findPostRrange(DayAgo, show=False):
 
     BiggestTarget = int(CurrentDate_0 + CurrentDate_1)
 
-    Start = findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False)
+    Start = findCurrentDateFirst(
+        BiggestTarget, NewestIndex, DayAgo, show=False)
     End = findCurrentDateFirst(
         BiggestTarget, NewestIndex, DayAgo - 1, show=False) - 1
 
