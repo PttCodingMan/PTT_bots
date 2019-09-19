@@ -31,18 +31,27 @@ PTTBot = PTT.Library(
 def PostHandler(Post):
     if Post is None:
         return
+
+    DeleteStatus = Post.getDeleteStatus()
+    if DeleteStatus != PTT.PostDeleteStatus.NotDeleted:
+        return
+
     global AuthorList
     global IPList
 
     Author = Post.getAuthor()
+    if Author is None:
+        return
     if '(' in Author:
         Author = Author[:Author.find('(')].strip()
 
     # Author is OK
-    Title = Post.getTitle()
-    DeleteStatus = Post.getDeleteStatus()
-    IP = Post.getIP()
 
+    IP = Post.getIP()
+    if IP is None:
+        return
+
+    Title = Post.getTitle()
     if DeleteStatus == PTT.PostDeleteStatus.ByAuthor:
         Title = '(本文已被刪除) [' + Author + ']'
     elif DeleteStatus == PTT.PostDeleteStatus.ByModerator:
@@ -55,17 +64,17 @@ def PostHandler(Post):
         Title = ''
     # Title is OK
 
-    # print(f'==>{Author}<==>{Title}<')
-
-    if IP is not None and IP not in IPList:
+    if IP not in IPList:
         IPList[IP] = []
 
-    if DeleteStatus == PTT.PostDeleteStatus.NotDeleted:
-        if '[公告]' in Title:
-            return
-        if IP is not None:
-            if Author not in IPList[IP]:
-                IPList[IP].append(Author)
+    if Author not in IPList[IP]:
+        IPList[IP].append(Author)
+
+    if Author not in AuthorList:
+        AuthorList[Author] = []
+
+    if IP not in AuthorList[Author]:
+        AuthorList[Author].append(IP)
 
     # Post is ok
 
@@ -136,6 +145,19 @@ def MultiPO(Board, Moderators, DaysAgo):
         EndIndex=End,
     )
 
+    MultiPOResult = ''
+    for Suspect, TitleAuthorList in AuthorList.items():
+
+        if len(TitleAuthorList) <= 1:
+            continue
+        # print('=' * 5 + ' ' + Suspect + ' ' + '=' * 5)
+
+        if MultiPOResult != '':
+            MultiPOResult += NewLine
+        for Title in TitleAuthorList:
+            MultiPOResult += CurrentDate + ' ' + \
+                Suspect + ' □ ' + Title + NewLine
+
     IPResult = ''
     for IP, SuspectList in IPList.items():
         # print('len:', len(SuspectList))
@@ -178,6 +200,16 @@ def MultiPO(Board, Moderators, DaysAgo):
     PublishContent += f'    蒐集範圍為 ALLPOST 搜尋 ({Board}) 情況下編號 ' + \
         str(Start) + ' ~ ' + str(End) + NewLine
     PublishContent += f'    共 {End - Start + 1} 篇文章' + NewLine * 2
+
+    if MultiPOResult != '':
+        Content += MultiPOResult
+
+        MultiPOResult = MultiPOResult.strip()
+        for line in MultiPOResult.split(NewLine):
+            PublishContent += '    ' + line + NewLine
+    else:
+        Content += '◆ ' + CurrentDate + ' 無人違反多 PO 板規' + NewLine
+        PublishContent += '    ' + '◆ ' + CurrentDate + ' 無人違反多 PO 板規' + NewLine
 
     if IPResult != '':
         Content += IPResult
