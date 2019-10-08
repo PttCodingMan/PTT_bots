@@ -146,7 +146,7 @@ def MultiPO(Board, Moderators, MaxPost):
     Title = CurrentDate + f' {Board} 板多 PO 結果'
 
     PublishContent += NewLine
-    PublishContent += '◆ ' + CurrentDate + f' {Board} 板多 PO 結果'
+    PublishContent += f'◆ {Board} 板多 PO 結果'
 
     Time = math.ceil(EndTime - StartTime)
     Min = int(Time / 60)
@@ -178,8 +178,8 @@ def MultiPO(Board, Moderators, MaxPost):
         for line in MultiPOResult.split(NewLine):
             PublishContent += '    ' + line + NewLine
     else:
-        Content += '◆ ' + CurrentDate + ' 無人違反多 PO 板規' + NewLine
-        PublishContent += '    ' + '◆ ' + CurrentDate + ' 無人違反多 PO 板規' + NewLine
+        Content += '◆ 無人違反多 PO 板規' + NewLine
+        PublishContent += '    ' + '◆ 無人違反多 PO 板規' + NewLine
 
     if IPResult != '':
         Content += IPResult
@@ -234,7 +234,8 @@ if __name__ == '__main__':
     for (Board, ModeratorList, MaxPost) in SearchList:
         MultiPO(Board, ModeratorList, MaxPost)
 
-    PublishContent += NewLine + '內容如有失準，歡迎告知。' + NewLine
+    PublishContent += NewLine + '歡迎其他板主來信新增檢查清單' + NewLine
+    PublishContent += '內容如有失準，歡迎告知。' + NewLine
     PublishContent += 'CodingMan'
 
     if Publish:
