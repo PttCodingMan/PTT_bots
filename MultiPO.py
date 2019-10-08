@@ -177,7 +177,7 @@ def MultiPO(Board, Moderators, MaxPost):
         for line in MultiPOResult.split(NewLine):
             PublishContent += '    ' + line + NewLine
     else:
-        Content += '◆  無人違反多 PO 板規' + NewLine
+        Content += '◆ 無人違反多 PO 板規' + NewLine
         PublishContent += '    ' + '◆ 無人違反多 PO 板規' + NewLine
 
     if IPResult != '':
