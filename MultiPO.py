@@ -1,4 +1,4 @@
-
+﻿
 import sys
 import os
 import time
@@ -14,8 +14,9 @@ from PTTLibrary import PTT
 import Util
 
 Ask = False
-Publish = False
-Mail = False
+Publish = True
+Mail = True
+# False True
 
 AuthorList = dict()
 IPList = dict()
