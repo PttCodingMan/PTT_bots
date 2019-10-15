@@ -162,14 +162,14 @@ def findPostRrange(DayAgo, show=False):
 
     if PostSearch is not None:
         NewestIndex = PTTBot.getNewestIndex(
-            PTT.IndexType.Board,
+            PTT.IndexType.BBS,
             Board=Board,
             SearchType=PostSearchType,
             SearchCondition=PostSearch,
         )
     else:
         NewestIndex = PTTBot.getNewestIndex(
-            PTT.IndexType.Board,
+            PTT.IndexType.BBS,
             Board=Board,
         )
 

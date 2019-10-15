@@ -69,7 +69,7 @@ def PostHandler(Post):
     AuthorList[Author].append(Title)
 
 
-def MultiPO(Board, Moderators, MaxPost):
+def MultiPO(Board, Moderators, MaxPost, dayAgo=1):
 
     global AuthorList
     global IPList
@@ -93,8 +93,6 @@ def MultiPO(Board, Moderators, MaxPost):
         PublishContent += '開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual' + NewLine
         PublishContent += '抓多 PO 程式: https://github.com/Truth0906/PTTModeratorTool' + NewLine
 
-    dayAgo = 1
-
     StartTime = time.time()
     AuthorList = dict()
     IPList = dict()
@@ -107,6 +105,7 @@ def MultiPO(Board, Moderators, MaxPost):
 
     ErrorPostList, DeleteCount = PTTBot.crawlBoard(
         PostHandler,
+        PTT.IndexType.BBS,
         Util.Board,
         StartIndex=Start,
         EndIndex=End,
