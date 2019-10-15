@@ -69,7 +69,7 @@ def PostHandler(Post):
     AuthorList[Author].append(Title)
 
 
-def MultiPO(Board, Moderators, MaxPost, dayAgo=1):
+def MultiPO(Board, Moderators, MaxPost):
 
     global AuthorList
     global IPList
@@ -78,6 +78,7 @@ def MultiPO(Board, Moderators, MaxPost, dayAgo=1):
     global Publish
     global Ask
     global Mail
+    global dayAgo
 
     Util.PTTBot = PTTBot
     Util.PostSearch = f'({Board})'
@@ -219,6 +220,8 @@ if __name__ == '__main__':
         ('HatePolitics', ['Neptunium', 'mark2165', 'kero2377'], 5),
     ]
 
+    dayAgo = 1
+
     try:
         with open('Account.txt') as AccountFile:
             Account = json.load(AccountFile)
@@ -238,7 +241,7 @@ if __name__ == '__main__':
     PublishContent += 'CodingMan'
 
     if Publish:
-        CurrentDate = Util.getDate(1)
+        CurrentDate = Util.getDate(dayAgo)
 
         PTTBot.post('Test', CurrentDate + ' 多 PO 結果', PublishContent, 1, 0)
         PTTBot.log('在 Test 板發文成功')
