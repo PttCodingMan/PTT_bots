@@ -115,6 +115,8 @@ def MultiPO(Board, Moderators, MaxPost):
         Query=True,
     )
 
+    EndTime = time.time()
+
     MultiPOResult = ''
     for Suspect, TitleAuthorList in AuthorList.items():
 
@@ -140,8 +142,6 @@ def MultiPO(Board, Moderators, MaxPost):
         for Line in SuspectList:
             # print('>   ' + CurrentDate + ' ' + Line)
             IPResult += CurrentDate + ' ' + Line + NewLine
-
-    EndTime = time.time()
 
     Title = CurrentDate + f' {Board} 板多 PO 結果'
 
