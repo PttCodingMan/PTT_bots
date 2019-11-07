@@ -215,10 +215,9 @@ if __name__ == '__main__':
 
     SearchList = [
         ('Gossiping', ['Bignana'], 5),
-        ('Wanted', ['gogin'], 3),
+        ('Wanted', ['LittleCalf'], 3),
         ('give', ['gogin'], 3),
         ('HatePolitics', ['Neptunium', 'mark2165', 'kero2377'], 5),
-        ('Beauty', ['hateOnas'], 3),
     ]
 
     dayAgo = 1
