@@ -346,8 +346,17 @@ if __name__ == '__main__':
                 CurrentDate = Util.getDate(dayAgo)
                 if CurrentDate != LastDate:
                     # 新的一天!!!清空清單
+                    PTTBot.logout()
+
+                    print('半夜休息中')
+
+                    # 暫停六小時
+                    time.sleep(60 * 60 * 6)
+                    print('重新上工!!')
                     LastDate = CurrentDate
                     HatePoliticsList = dict()
+
+                    PTTBot.login(ID, Password)
 
                 Index = PTTBot.getNewestIndex(
                     PTT.IndexType.BBS,

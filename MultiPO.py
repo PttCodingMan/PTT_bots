@@ -214,10 +214,10 @@ def MultiPO(Board, Moderators, MaxPost):
 if __name__ == '__main__':
 
     SearchList = [
-        ('Gossiping', ['Bignana'], 5),
+        ('Gossiping', ['Bignana', 'XXXXGAY'], 5),
         ('Wanted', ['LittleCalf'], 3),
         ('give', ['gogin'], 3),
-        ('HatePolitics', ['Neptunium', 'mark2165', 'kero2377'], 5),
+        ('HatePolitics', ['kero2377'], 5),
     ]
 
     dayAgo = 1
@@ -231,7 +231,7 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
 
-    PTTBot.login(ID, Password, KickOtherLogin=True)
+    PTTBot.login(ID, Password)
 
     for (Board, ModeratorList, MaxPost) in SearchList:
         MultiPO(Board, ModeratorList, MaxPost)
