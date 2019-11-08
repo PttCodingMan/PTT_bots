@@ -204,8 +204,12 @@ def findPostRrange(DayAgo, show=False):
 
     Start = findCurrentDateFirst(
         BiggestTarget, NewestIndex, DayAgo, show=False)
-    End = findCurrentDateFirst(
-        BiggestTarget, NewestIndex, DayAgo - 1, show=False) - 1
+
+    if DayAgo > 0:
+        End = findCurrentDateFirst(
+            BiggestTarget, NewestIndex, DayAgo - 1, show=False) - 1
+    elif DayAgo == 0:
+        End = NewestIndex
 
     if show:
         print('Result', Start, End)
