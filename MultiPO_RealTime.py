@@ -22,7 +22,6 @@ AuthorList = dict()
 IPList = dict()
 PublishContent = None
 NewLine = '\r\n'
-PTTBot = PTT.Library()
 
 
 def PostHandler(Post):
@@ -335,7 +334,24 @@ if __name__ == '__main__':
         HatePoliticsList = dict()
         LastDate = None
 
-    PTTBot.login(ID, Password)
+    PTTBot = PTT.Library(
+        LogLevel=PTT.LogLevel.TRACE
+    )
+    try:
+        PTTBot.login(
+            ID,
+            Password,
+            KickOtherLogin=True
+        )
+    except PTT.Exceptions.LoginError:
+        PTTBot.log('登入失敗')
+        sys.exit()
+    except PTT.Exceptions.ConnectError:
+        PTTBot.log('登入失敗')
+        sys.exit()
+    except PTT.Exceptions.ConnectionClosed:
+        PTTBot.log('登入失敗')
+        sys.exit()
 
     Index = 0
     LastIndex = 0
