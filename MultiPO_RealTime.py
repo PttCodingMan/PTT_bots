@@ -325,17 +325,17 @@ if __name__ == '__main__':
         CurrentDate = Util.getDate(dayAgo).replace('/', '')
         with open(f'HatePoliticsList_{CurrentDate}.txt', encoding='utf8') as File:
             HatePoliticsList = json.load(File)
-        LastDate = Util.getDate(dayAgo)
     except Exception as e:
 
         traceback.print_tb(e.__traceback__)
         print(e)
         print('無法讀取 HatePoliticsList.txt')
         HatePoliticsList = dict()
-        LastDate = None
+    
+    LastDate = Util.getDate(dayAgo)
 
     PTTBot = PTT.Library(
-        LogLevel=PTT.LogLevel.TRACE
+        # LogLevel=PTT.LogLevel.TRACE
     )
     try:
         PTTBot.login(
