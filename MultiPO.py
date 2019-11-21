@@ -215,7 +215,7 @@ if __name__ == '__main__':
 
     SearchList = [
         ('Gossiping', ['Bignana', 'XXXXGAY'], 5),
-        ('Wanted', ['LittleCalf'], 3),
+        ('Wanted', ['LittleCalf', 'somisslove'], 3),
         ('give', ['gogin'], 3),
         ('HatePolitics', ['kero2377'], 5),
     ]
