@@ -127,8 +127,12 @@ def MultiPO(Board, Moderators, MaxPost):
         if MultiPOResult != '':
             MultiPOResult += NewLine
         for Title in TitleAuthorList:
-            MultiPOResult += CurrentDate + ' ' + \
-                Suspect + ' □ ' + Title + NewLine
+            if not Title.startswith('R:'):
+                MultiPOResult += CurrentDate + ' ' + \
+                    Suspect + ' □ ' + Title + NewLine
+            else:
+                MultiPOResult += CurrentDate + ' ' + \
+                    Suspect + ' ' + Title + NewLine
 
     IPResult = ''
     for IP, SuspectList in IPList.items():
