@@ -222,6 +222,7 @@ if __name__ == '__main__':
         ('Wanted', ['LittleCalf', 'somisslove'], 3),
         ('give', ['gogin'], 3),
         ('HatePolitics', ['kero2377'], 5),
+        ('Gamesale', ['mithralin'], 2),
     ]
 
     dayAgo = 1
