@@ -13,6 +13,14 @@ from datetime import date, timedelta
 from PTTLibrary import PTT
 import Util
 
+SearchList = [
+    ('Gossiping', ['Bignana', 'XXXXGAY'], 5),
+    ('Wanted', ['LittleCalf', 'somisslove'], 3),
+    ('give', ['gogin'], 3),
+    ('HatePolitics', ['kero2377'], 5),
+    ('Gamesale', ['mithralin'], 1),
+]
+
 Ask = False
 Publish = True
 Mail = True
@@ -216,15 +224,7 @@ def MultiPO(Board, Moderators, MaxPost):
 
 
 if __name__ == '__main__':
-
-    SearchList = [
-        ('Gossiping', ['Bignana', 'XXXXGAY'], 5),
-        ('Wanted', ['LittleCalf', 'somisslove'], 3),
-        ('give', ['gogin'], 3),
-        ('HatePolitics', ['kero2377'], 5),
-        ('Gamesale', ['mithralin'], 2),
-    ]
-
+    
     dayAgo = 1
 
     try:
