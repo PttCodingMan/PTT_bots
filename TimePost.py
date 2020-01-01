@@ -43,22 +43,12 @@ if __name__ == '__main__':
         PTTBot.log('登入失敗')
         sys.exit()
 
-    TargetPreTime = '23:59'
+    TargetPreTime = '21:08'
 
-    Board = 'Wanted'
-    Title = '2020 第一篇'
+    Board = 'Test'
+    Title = '零秒PO文新版演算法測試'
     Content = '''
-汪踢!!新年快樂!!
-新竹!!新年快樂!!
-彰化!!新年快樂!!
-
-今年的跨年跟大家一起在批踢踢跨年 XD
-
-希望大家在新的一年有全新的開始
-
-2020了!!!喔!!!!!!!!!!!(how how
-
-每十推100P ~ 發到爆。
+零秒 PO文新版演算法
 '''
     Content = Content.replace('\n', '\r\n')
 
@@ -71,20 +61,30 @@ if __name__ == '__main__':
     LastTime = None
     try:
         while True:
-            PTT_TIME = PTTBot.getTime()
-            if PTT_TIME is None:
-                print('PTT_TIME is None')
-                continue
 
-            if PTT_TIME == TargetPreTime:
-                Ready = True
-            elif Ready:
-                # print(PTT_TIME)
+            SlowDetectTime = 55
+            StartTime = EndTime = time.time()
+
+            while EndTime - StartTime < SlowDetectTime:
+
+                time.sleep(1)
+                EndTime = time.time()
+                CurrentTime = LastTime = PTTBot.getTime()
+                print(CurrentTime, end='\r')
+                if TargetPreTime == CurrentTime:
+                    Ready = True
+
+            if Ready:
+                print('最後準備')
+                while LastTime == CurrentTime:
+                    CurrentTime = PTTBot.getTime()
                 break
-            if LastTime != PTT_TIME:
-                LastTime = PTT_TIME
-                print(PTT_TIME, end='\r')
-            time.sleep(0.01)
+            else:
+                while LastTime == CurrentTime:
+                    time.sleep(1)
+                    CurrentTime = PTTBot.getTime()
+
+            # 批踢踢的一分鐘過了
 
         PTTBot.post(
             Board,
@@ -93,12 +93,12 @@ if __name__ == '__main__':
             2,
             3
         )
-        print(PTT_TIME)
+
     except Exception as e:
         traceback.print_tb(e.__traceback__)
         print(e)
     except KeyboardInterrupt:
         pass
 
-    print('登出')
+    print('登出                 ')
     PTTBot.logout()
