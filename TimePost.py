@@ -43,7 +43,7 @@ if __name__ == '__main__':
         PTTBot.log('登入失敗')
         sys.exit()
 
-    TargetPreTime = '21:08'
+    TargetPreTime = '22:01'
 
     Board = 'Test'
     Title = '零秒PO文新版演算法測試'
@@ -59,20 +59,32 @@ if __name__ == '__main__':
 
     Ready = False
     LastTime = None
+
     try:
         while True:
 
             SlowDetectTime = 55
             StartTime = EndTime = time.time()
+            NextMin = False
 
+            LastTime = CurrentTime = PTTBot.getTime()
             while EndTime - StartTime < SlowDetectTime:
-
                 time.sleep(1)
                 EndTime = time.time()
-                CurrentTime = LastTime = PTTBot.getTime()
-                print(CurrentTime, end='\r')
+                CurrentTime = PTTBot.getTime()
+
+                if LastTime != CurrentTime:
+                    NextMin = True
+                    break
+
+                LastTime = CurrentTime
+                # print(CurrentTime, end='\r')
+                PTTBot.log(CurrentTime)
                 if TargetPreTime == CurrentTime:
                     Ready = True
+
+            if NextMin:
+                continue
 
             if Ready:
                 print('最後準備')
@@ -83,6 +95,8 @@ if __name__ == '__main__':
                 while LastTime == CurrentTime:
                     time.sleep(1)
                     CurrentTime = PTTBot.getTime()
+                    PTTBot.log(f'slow area {CurrentTime}')
+                    # print(f'slow area {CurrentTime}', end='\r')
 
             # 批踢踢的一分鐘過了
 
