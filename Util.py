@@ -18,13 +18,29 @@ def getDate(TimeDel, PTTSytle=True):
     # print('>' + PassDate + '<')
     if PTTSytle and PassDate.startswith('0'):
         PassDate = PassDate[1:]
+
     return PassDate
+
+
+def getTarget(Date0, Date1):
+
+    if Date0 == '0101':
+        Date0 = '1' + Date0
+    else:
+        Date0 = '0' + Date0
+
+    if Date1 == '0101':
+        Date1 = '1' + Date1
+    else:
+        Date1 = '0' + Date1
+
+    return int(Date0 + Date1)
 
 
 HistoryList = dict()
 
 
-def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
+def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False, OldestIndex=1):
 
     global PTTBot
     global Board
@@ -38,10 +54,19 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
     CurrentDate_0 = getDate(
         DayAgo + 1, PTTSytle=False).replace('/', '').strip()
     CurrentDate_1 = getDate(DayAgo, PTTSytle=False).replace('/', '').strip()
-    FinishTarget = int(CurrentDate_0 + CurrentDate_1)
+    FinishTarget = getTarget(CurrentDate_0, CurrentDate_1)
 
-    StartIndex = 1
+    if show:
+        print(f'CurrentDate_0 {CurrentDate_0}')
+        print(f'CurrentDate_1 {CurrentDate_1}')
+        print(f'FinishTarget {FinishTarget}')
+
+    StartIndex = OldestIndex
     EndIndex = NewestIndex
+
+    if show:
+        print(f'StartIndex {StartIndex}')
+        print(f'EndIndex {EndIndex}')
 
     CurrentIndex = int((StartIndex + EndIndex) / 2)
     RetryIndex = 0
@@ -101,7 +126,7 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False):
         CurrentDate_1 = Post_1.getListDate().replace('/', '').strip()
         if len(CurrentDate_1) < 4:
             CurrentDate_1 = '0' + CurrentDate_1
-        CurrentTarget = int(CurrentDate_0 + CurrentDate_1)
+        CurrentTarget = getTarget(CurrentDate_0, CurrentDate_1)
 
         if show:
             print('CurrentDate_0: ' + CurrentDate_0)
@@ -200,14 +225,19 @@ def findPostRrange(DayAgo, show=False):
     if len(CurrentDate_1) < 4:
         CurrentDate_1 = '0' + CurrentDate_1
 
-    BiggestTarget = int(CurrentDate_0 + CurrentDate_1)
+    BiggestTarget = getTarget(CurrentDate_0, CurrentDate_1)
+    if show:
+        print(f'BiggestTarget {BiggestTarget}')
 
     Start = findCurrentDateFirst(
         BiggestTarget, NewestIndex, DayAgo, show=False)
 
+    if show:
+        print(f'Start {Start}')
+
     if DayAgo > 0:
         End = findCurrentDateFirst(
-            BiggestTarget, NewestIndex, DayAgo - 1, show=False) - 1
+            BiggestTarget, NewestIndex, DayAgo - 1, show=False, OldestIndex=Start) - 1
     elif DayAgo == 0:
         End = NewestIndex
 

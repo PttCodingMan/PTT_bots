@@ -224,7 +224,7 @@ def MultiPO(Board, Moderators, MaxPost):
 
 
 if __name__ == '__main__':
-    
+
     dayAgo = 1
 
     try:
@@ -238,18 +238,22 @@ if __name__ == '__main__':
 
     PTTBot.login(ID, Password)
 
-    for (Board, ModeratorList, MaxPost) in SearchList:
-        MultiPO(Board, ModeratorList, MaxPost)
+    try:
+        for (Board, ModeratorList, MaxPost) in SearchList:
+            MultiPO(Board, ModeratorList, MaxPost)
 
-    PublishContent += NewLine + '歡迎其他板主來信新增檢查清單' + NewLine
-    PublishContent += '內容如有失準，歡迎告知。' + NewLine
-    PublishContent += 'CodingMan'
+        PublishContent += NewLine + '歡迎其他板主來信新增檢查清單' + NewLine
+        PublishContent += '內容如有失準，歡迎告知。' + NewLine
+        PublishContent += 'CodingMan'
 
-    if Publish:
-        CurrentDate = Util.getDate(dayAgo)
+        if Publish:
+            CurrentDate = Util.getDate(dayAgo)
 
-        PTTBot.post('Test', CurrentDate + ' 多 PO 結果', PublishContent, 1, 0)
-        PTTBot.log('在 Test 板發文成功')
-    else:
-        PTTBot.log('取消備份')
+            PTTBot.post('Test', CurrentDate + ' 多 PO 結果', PublishContent, 1, 0)
+            PTTBot.log('在 Test 板發文成功')
+        else:
+            PTTBot.log('取消備份')
+    except KeyboardInterrupt:
+        pass
+
     PTTBot.logout()
