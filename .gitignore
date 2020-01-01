@@ -104,3 +104,4 @@ venv.bak/
 .mypy_cache/
 /Account.txt
 HatePoliticsList*.txt
+/Account3.txt
