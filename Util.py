@@ -2,7 +2,7 @@
 import sys
 import os
 from PTTLibrary import PTT
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 PTTBot = None
 Board = 'ALLPOST'
@@ -24,15 +24,17 @@ def getDate(TimeDel, PTTSytle=True):
 
 def getTarget(Date0, Date1):
 
-    if Date0 == '0101':
-        Date0 = '1' + Date0
-    else:
-        Date0 = '0' + Date0
+    Today = int(datetime.today().strftime('%m%d'))
 
-    if Date1 == '0101':
-        Date1 = '1' + Date1
+    if int(Date0) > Today:
+        Date0 = '0' + Date0
     else:
+        Date0 = '1' + Date0
+
+    if int(Date1) > Today:
         Date1 = '0' + Date1
+    else:
+        Date1 = '1' + Date1
 
     return int(Date0 + Date1)
 
@@ -237,7 +239,7 @@ def findPostRrange(DayAgo, show=False):
 
     if DayAgo > 0:
         End = findCurrentDateFirst(
-            BiggestTarget, NewestIndex, DayAgo - 1, show=False, OldestIndex=Start) - 1
+            BiggestTarget, NewestIndex, DayAgo - 1, show=True, OldestIndex=Start) - 1
     elif DayAgo == 0:
         End = NewestIndex
 
