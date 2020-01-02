@@ -142,33 +142,7 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False, OldestI
             HistoryList[str(DayAgo)] = CurrentIndex
             return CurrentIndex
 
-        # StartIndex : 上界
-        # CurrentTarget: 旗標的日期
-        # FinishTarget: 目標
-        # EndIndex : 下界
-
-        if BiggestTarget < CurrentTarget or BiggestTarget < FinishTarget:
-            # 表示 CurrentTarget 是去年的日期
-            # 現在就需要知道目標是不是去年的日期
-
-            if BiggestTarget < FinishTarget:
-                # StartIndex : 上界
-                # CurrentTarget: 旗標的日期
-                # FinishTarget: 目標
-                # =========跨年分隔線=========
-                # EndIndex : 下界
-                if CurrentTarget > FinishTarget:
-                    EndIndex = CurrentIndex - 1
-                elif CurrentTarget < FinishTarget:
-                    StartIndex = CurrentIndex + 1
-            else:
-                # StartIndex : 上界
-                # CurrentTarget: 旗標的日期
-                # =========跨年分隔線=========
-                # FinishTarget: 目標
-                # EndIndex : 下界
-                StartIndex = CurrentIndex + 1
-        elif CurrentTarget > FinishTarget:
+        if CurrentTarget > FinishTarget:
             EndIndex = CurrentIndex - 1
         elif CurrentTarget < FinishTarget:
             StartIndex = CurrentIndex + 1
@@ -239,7 +213,7 @@ def findPostRrange(DayAgo, show=False):
 
     if DayAgo > 0:
         End = findCurrentDateFirst(
-            BiggestTarget, NewestIndex, DayAgo - 1, show=True, OldestIndex=Start) - 1
+            BiggestTarget, NewestIndex, DayAgo - 1, show=False, OldestIndex=Start) - 1
     elif DayAgo == 0:
         End = NewestIndex
 
