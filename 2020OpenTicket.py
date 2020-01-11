@@ -15,6 +15,7 @@ from PTTLibrary import PTT
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+
 def getPW():
     try:
         with open('Account3.txt') as AccountFile:
@@ -62,13 +63,15 @@ if __name__ == '__main__':
                         verify=False
                     )
                 except requests.exceptions.ConnectionError:
-                    print('取得 ERP 資料失敗')
+                    print('取得資料失敗')
+                    continue
 
                 Source = response.text
                 # print(Source)
 
                 Sourcelines = Source.split('\n')
-                Sourcelines = [x.strip() for x in Sourcelines if x.strip().startswith('<td') and 'tdAlignRight' in x]
+                Sourcelines = [x.strip() for x in Sourcelines if x.strip(
+                ).startswith('<td') and 'tdAlignRight' in x]
                 for i, line in enumerate(Sourcelines):
                     # print(f'line [{line}]')
                     if i == 0:
@@ -98,7 +101,6 @@ if __name__ == '__main__':
 
             PTTBot.push('Gossiping', PTT.PushType.Arrow,
                         Content, PostIndex=786734)
-
 
     except Exception as e:
         traceback.print_tb(e.__traceback__)
