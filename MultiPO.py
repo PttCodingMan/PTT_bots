@@ -30,7 +30,6 @@ AuthorList = dict()
 IPList = dict()
 PublishContent = None
 NewLine = '\r\n'
-PTTBot = PTT.Library()
 
 
 def PostHandler(Post):
@@ -211,6 +210,9 @@ def MultiPO(Board, Moderators, MaxPost):
     print(Title)
     print(Content)
 
+    # with open('Test.txt', 'w', encoding='utf8') as in_file:
+    #     in_file.write(Content)
+
     if Ask:
         Choise = input('要發佈嗎? [Y]').lower()
         Publish = (Choise == 'y') or (Choise == '')
@@ -236,6 +238,9 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
 
+    PTTBot = PTT.Library(
+        # LogLevel=PTT.LogLevel.TRACE
+    )
     PTTBot.login(ID, Password)
 
     try:
@@ -253,6 +258,8 @@ if __name__ == '__main__':
             PTTBot.log('在 Test 板發文成功')
         else:
             PTTBot.log('取消備份')
+    except Exception:
+        pass
     except KeyboardInterrupt:
         pass
 
