@@ -14,7 +14,7 @@ from PTTLibrary import PTT
 import Util
 
 SearchList = [
-    ('Gossiping', ['Bignana', 'XXXXGAY'], 5),
+    ('Gossiping', ['arsonlolita', 'Bignana'], 5),
     ('Wanted', ['LittleCalf', 'somisslove'], 3),
     ('give', ['gogin'], 3),
     ('HatePolitics', ['kero2377'], 5),
@@ -99,7 +99,9 @@ def MultiPO(Board, Moderators, MaxPost):
 
         PublishContent += 'PTT Library: https://tinyurl.com/umqff3v' + NewLine
         PublishContent += '開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual' + NewLine
-        PublishContent += '抓超貼程式: https://github.com/PttCodingMan/PTTBots' + NewLine
+        PublishContent += '抓超貼程式: https://github.com/PttCodingMan/PTTBots' + NewLine * 2
+
+        PublishContent += f'PTT Library 版本: {PTTBot.getVersion()}' + NewLine
 
     StartTime = time.time()
     AuthorList = dict()
@@ -250,6 +252,8 @@ if __name__ == '__main__':
         PublishContent += NewLine + '歡迎其他板主來信新增檢查清單' + NewLine
         PublishContent += '內容如有失準，歡迎告知。' + NewLine
         PublishContent += 'CodingMan'
+
+        print(PublishContent)
 
         if Publish:
             CurrentDate = Util.getDate(dayAgo)
