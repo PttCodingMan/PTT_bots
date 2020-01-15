@@ -30,7 +30,6 @@ AuthorList = dict()
 IPList = dict()
 PublishContent = None
 NewLine = '\r\n'
-PTTBot = PTT.Library()
 
 
 def PostHandler(Post):
@@ -95,19 +94,19 @@ def MultiPO(Board, Moderators, MaxPost):
     global PublishContent
     if PublishContent is None:
 
-        PublishContent = '此內容由抓多 PO 程式產生' + NewLine
+        PublishContent = '此內容由抓超貼程式產生' + NewLine
         PublishContent += '由 CodingMan 透過 PTT Library 開發，' + NewLine * 2
 
-        PublishContent += 'PTT Library: https://github.com/Truth0906/PTTLibrary' + NewLine
+        PublishContent += 'PTT Library: https://tinyurl.com/umqff3v' + NewLine
         PublishContent += '開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual' + NewLine
-        PublishContent += '抓多 PO 程式: https://github.com/Truth0906/PTTModeratorTool' + NewLine
+        PublishContent += '抓超貼程式: https://github.com/PttCodingMan/PTTBots' + NewLine
 
     StartTime = time.time()
     AuthorList = dict()
     IPList = dict()
     CurrentDate = Util.getDate(dayAgo)
 
-    PTTBot.log(f'開始 {Board} 板昨天的多 PO 偵測')
+    PTTBot.log(f'開始 {Board} 板昨天的超貼偵測')
     PTTBot.log('日期: ' + CurrentDate)
     Start, End = Util.findPostRrange(dayAgo, show=False)
     PTTBot.log('編號範圍 ' + str(Start) + ' ~ ' + str(End))
@@ -155,16 +154,16 @@ def MultiPO(Board, Moderators, MaxPost):
             # print('>   ' + CurrentDate + ' ' + Line)
             IPResult += CurrentDate + ' ' + Line + NewLine
 
-    Title = CurrentDate + f' {Board} 板多 PO 結果'
+    Title = CurrentDate + f' {Board} 板超貼結果'
 
     PublishContent += NewLine
-    PublishContent += f'◆ {Board} 板多 PO 結果'
+    PublishContent += f'◆ {Board} 板超貼結果'
 
     Time = math.ceil(EndTime - StartTime)
     Min = int(Time / 60)
     Sec = int(Time % 60)
 
-    Content = '此內容由抓多 PO 程式產生' + NewLine
+    Content = '此內容由抓超貼程式產生' + NewLine
 
     Content += '共耗時'
     PublishContent += '共耗時'
@@ -190,8 +189,8 @@ def MultiPO(Board, Moderators, MaxPost):
         for line in MultiPOResult.split(NewLine):
             PublishContent += '    ' + line + NewLine
     else:
-        Content += '◆ 無人違反多 PO 板規' + NewLine
-        PublishContent += '    ' + '◆ 無人違反多 PO 板規' + NewLine
+        Content += '◆ 無人違反超貼板規' + NewLine
+        PublishContent += '    ' + '◆ 無人違反超貼板規' + NewLine
 
     if IPResult != '':
         Content += IPResult
@@ -211,6 +210,9 @@ def MultiPO(Board, Moderators, MaxPost):
     print(Title)
     print(Content)
 
+    # with open('Test.txt', 'w', encoding='utf8') as in_file:
+    #     in_file.write(Content)
+
     if Ask:
         Choise = input('要發佈嗎? [Y]').lower()
         Publish = (Choise == 'y') or (Choise == '')
@@ -224,7 +226,7 @@ def MultiPO(Board, Moderators, MaxPost):
 
 
 if __name__ == '__main__':
-    
+
     dayAgo = 1
 
     try:
@@ -236,20 +238,29 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
 
+    PTTBot = PTT.Library(
+        # LogLevel=PTT.LogLevel.TRACE
+    )
     PTTBot.login(ID, Password)
 
-    for (Board, ModeratorList, MaxPost) in SearchList:
-        MultiPO(Board, ModeratorList, MaxPost)
+    try:
+        for (Board, ModeratorList, MaxPost) in SearchList:
+            MultiPO(Board, ModeratorList, MaxPost)
 
-    PublishContent += NewLine + '歡迎其他板主來信新增檢查清單' + NewLine
-    PublishContent += '內容如有失準，歡迎告知。' + NewLine
-    PublishContent += 'CodingMan'
+        PublishContent += NewLine + '歡迎其他板主來信新增檢查清單' + NewLine
+        PublishContent += '內容如有失準，歡迎告知。' + NewLine
+        PublishContent += 'CodingMan'
 
-    if Publish:
-        CurrentDate = Util.getDate(dayAgo)
+        if Publish:
+            CurrentDate = Util.getDate(dayAgo)
 
-        PTTBot.post('Test', CurrentDate + ' 多 PO 結果', PublishContent, 1, 0)
-        PTTBot.log('在 Test 板發文成功')
-    else:
-        PTTBot.log('取消備份')
+            PTTBot.post('Test', CurrentDate + ' 超貼結果', PublishContent, 1, 0)
+            PTTBot.log('在 Test 板發文成功')
+        else:
+            PTTBot.log('取消備份')
+    except Exception:
+        pass
+    except KeyboardInterrupt:
+        pass
+
     PTTBot.logout()
