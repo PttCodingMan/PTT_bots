@@ -14,7 +14,7 @@ from PTTLibrary import PTT
 import Util
 
 SearchList = [
-    ('Gossiping', ['arsonlolita', 'Bignana'], 5),
+    ('Gossiping', ['Bignana', 'xianyao'], 5),
     ('Wanted', ['LittleCalf', 'somisslove'], 3),
     ('give', ['gogin'], 3),
     ('HatePolitics', ['kero2377'], 5),
