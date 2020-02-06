@@ -117,35 +117,35 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
     
-    PTTBot = PTT.Library(kickOtherLogin=False)
-    Util.PTTBot = PTTBot
+    ptt_bot = PTT.Library(kickOtherLogin=False)
+    Util.PTTBot = ptt_bot
 
     StartTime = time.time()
 
-    ErrCode = PTTBot.login(ID, Password)
+    ErrCode = ptt_bot.login(ID, Password)
     if ErrCode != PTT.ErrorCode.Success:
-        PTTBot.Log('登入失敗')
+        ptt_bot.Log('登入失敗')
         sys.exit()
     
     NewestIndex, Todaty = Util.getToday()
-    PTTBot.Log('本日日期: >' + Todaty + '<')
+    ptt_bot.Log('本日日期: >' + Todaty + '<')
 
-    PTTBot.Log('最新文章編號: ' + str(NewestIndex))
+    ptt_bot.Log('最新文章編號: ' + str(NewestIndex))
     TodayFirstIndex = Util.findFirstIndex(NewestIndex, Todaty)
-    PTTBot.Log('本日最舊文章編號: ' + str(TodayFirstIndex))
+    ptt_bot.Log('本日最舊文章編號: ' + str(TodayFirstIndex))
 
     YesterDayNewIndex, YesterDay = Util.getYesterDay(TodayFirstIndex)
-    PTTBot.Log('昨日日期: >' + YesterDay + '<')
-    PTTBot.Log('昨日最新文章編號: >' + str(YesterDayNewIndex) + '<')
+    ptt_bot.Log('昨日日期: >' + YesterDay + '<')
+    ptt_bot.Log('昨日最新文章編號: >' + str(YesterDayNewIndex) + '<')
     YesterDayOldIndex = Util.findFirstIndex(TodayFirstIndex - 1, YesterDay, show=False)
-    PTTBot.Log('昨日最舊文章編號: ' + str(YesterDayOldIndex))
+    ptt_bot.Log('昨日最舊文章編號: ' + str(YesterDayOldIndex))
 
-    ErrCode, SuccessCount, DeleteCount = PTTBot.crawlBoard(Util.Board, PostHandler, StartIndex=YesterDayOldIndex, EndIndex=NewestIndex)
+    ErrCode, SuccessCount, DeleteCount = ptt_bot.crawlBoard(Util.current_board, PostHandler, StartIndex=YesterDayOldIndex, EndIndex=NewestIndex)
     if ErrCode != PTT.ErrorCode.Success:
-        PTTBot.Log('爬行失敗')
+        ptt_bot.Log('爬行失敗')
         sys.exit()
     
-    PTTBot.Log('爬行成功共 ' + str(SuccessCount) + ' 篇文章 共有 ' + str(DeleteCount) + ' 篇文章被刪除')
+    ptt_bot.Log('爬行成功共 ' + str(SuccessCount) + ' 篇文章 共有 ' + str(DeleteCount) + ' 篇文章被刪除')
 
     # TargetWord = 'ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄧㄨㄩㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦ'
     # 把注音 ㄧ 拿掉，太容易搞混了
@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
     Result_1 = ''
     Result_2 = ''
-    NewLine = '\r\n'
+    new_line = '\r\n'
     for Suspect, ContentList in List.items():
         for TitleContent in ContentList:
             
@@ -170,7 +170,7 @@ if __name__ == '__main__':
                 print(Title)
                 print(Content)
 
-                Result_1 += '    ' + Suspect + '     □ ' + Title + NewLine
+                Result_1 += '    ' + Suspect + '     □ ' + Title + new_line
             
             Count_Chinese = countChinese(Content)
             Count_JP = countJP(Content)
@@ -183,6 +183,6 @@ if __name__ == '__main__':
                 print(Title)
                 print(Content)
 
-                Result_2 += '    ' + Suspect + '     □ ' + Title + NewLine
+                Result_2 += '    ' + Suspect + '     □ ' + Title + new_line
 
     EndTime = time.time()

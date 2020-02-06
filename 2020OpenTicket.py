@@ -34,17 +34,17 @@ if __name__ == '__main__':
     os.system('cls')
 
     ID, Password = getPW()
-    PTTBot = PTT.Library()
+    ptt_bot = PTT.Library()
 
     try:
         try:
-            PTTBot.login(
+            ptt_bot.login(
                 ID,
                 Password,
             )
             pass
         except PTT.Exceptions.LoginError:
-            PTTBot.log('登入失敗')
+            ptt_bot.log('登入失敗')
             sys.exit()
 
         lastcontent = None
@@ -97,10 +97,10 @@ if __name__ == '__main__':
                     lastcontent = Content
                     break
                 time.sleep(3)
-                PTTBot.getTime()
+                ptt_bot.getTime()
 
-            PTTBot.push('Gossiping', PTT.PushType.Arrow,
-                        Content, PostIndex=786734)
+            ptt_bot.push('Gossiping', PTT.PushType.Arrow,
+                         Content, PostIndex=786734)
 
     except Exception as e:
         traceback.print_tb(e.__traceback__)
@@ -108,4 +108,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
 
-    PTTBot.logout()
+    ptt_bot.logout()

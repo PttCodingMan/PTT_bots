@@ -59,5 +59,5 @@ def FindStrInFile(path, func):
         FindStrInFile(f'{fullpath}/{subpath}', func)
 
 
-FindStrInFile('D:/Git/pttbbs', 'kick_all')
+FindStrInFile('D:/Git/pttbbs', '板主:')
 print(count)

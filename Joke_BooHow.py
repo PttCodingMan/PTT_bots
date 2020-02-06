@@ -13,15 +13,15 @@ from datetime import date, timedelta
 from PTTLibrary import PTT
 import Util
 
-Ask = False
-Publish = False
-Mail = True
+ask = False
+publish = False
+mail = True
 # False True
 
-AuthorList = dict()
-IPList = dict()
-PublishContent = None
-NewLine = '\r\n'
+author_list = dict()
+ip_list = dict()
+publish_content = None
+new_line = '\r\n'
 
 if __name__ == '__main__':
 
@@ -38,25 +38,25 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
 
-    LastDate = Util.getDate(dayAgo)
+    LastDate = Util.get_date(dayAgo)
 
-    PTTBot = PTT.Library(
+    ptt_bot = PTT.Library(
         # LogLevel=PTT.LogLevel.TRACE
     )
     try:
-        PTTBot.login(
+        ptt_bot.login(
             ID,
             Password,
             KickOtherLogin=True
         )
     except PTT.Exceptions.LoginError:
-        PTTBot.log('登入失敗')
+        ptt_bot.log('登入失敗')
         sys.exit()
     except PTT.Exceptions.ConnectError:
-        PTTBot.log('登入失敗')
+        ptt_bot.log('登入失敗')
         sys.exit()
     except PTT.Exceptions.ConnectionClosed:
-        PTTBot.log('登入失敗')
+        ptt_bot.log('登入失敗')
         sys.exit()
 
     run = True
@@ -68,10 +68,10 @@ if __name__ == '__main__':
         while LastIndex == Index:
             Time = strftime('%H:%M:%S')
             try:
-                CurrentDate = Util.getDate(dayAgo)
+                CurrentDate = Util.get_date(dayAgo)
                 if CurrentDate != LastDate:
                     # 新的一天!!!清空清單
-                    PTTBot.logout()
+                    ptt_bot.logout()
 
                     print('半夜休息中')
 
@@ -81,44 +81,44 @@ if __name__ == '__main__':
                     LastDate = CurrentDate
                     HatePoliticsList = dict()
 
-                    PTTBot.login(ID, Password)
+                    ptt_bot.login(ID, Password)
 
-                Index = PTTBot.getNewestIndex(
+                Index = ptt_bot.getNewestIndex(
                     PTT.IndexType.BBS,
                     Board='joke',
                 )
             except PTT.Exceptions.ConnectionClosed:
                 while True:
                     try:
-                        PTTBot.login(
+                        ptt_bot.login(
                             ID,
                             Password,
                             KickOtherLogin=True
                         )
                         break
                     except PTT.Exceptions.LoginError:
-                        PTTBot.log('登入失敗')
+                        ptt_bot.log('登入失敗')
                         time.sleep(1)
                     except PTT.Exceptions.ConnectError:
-                        PTTBot.log('登入失敗')
+                        ptt_bot.log('登入失敗')
                         time.sleep(1)
                     except PTT.Exceptions.ConnectionClosed:
-                        PTTBot.log('登入失敗')
+                        ptt_bot.log('登入失敗')
                         time.sleep(1)
             except PTT.Exceptions.UseTooManyResources:
                 while True:
                     try:
-                        PTTBot.login(
+                        ptt_bot.login(
                             ID,
                             Password,
                             KickOtherLogin=True
                         )
                         break
                     except PTT.Exceptions.LoginError:
-                        PTTBot.log('登入失敗')
+                        ptt_bot.log('登入失敗')
                         time.sleep(1)
                     except PTT.Exceptions.ConnectError:
-                        PTTBot.log('登入失敗')
+                        ptt_bot.log('登入失敗')
                         time.sleep(1)
             print(f'{Time} 最新編號 {Index}', end='\r')
             if LastIndex != Index and LastIndex != 0:
@@ -140,14 +140,14 @@ if __name__ == '__main__':
         for i in range(LastIndex + 1, Index + 1):
             print(f'偵測編號 {i} 文章')
 
-            Post = PTTBot.getPost(
+            Post = ptt_bot.getPost(
                 'joke',
                 PostIndex=i
             )
 
             if 'how' in Post.getContent().lower():
                 print('Find how!!!')
-                PTTBot.push(
+                ptt_bot.push(
                     'joke',
                     PostIndex=i,
                     PushType=PTT.PushType.Boo,
@@ -156,4 +156,4 @@ if __name__ == '__main__':
 
         print('=' * 50)
 
-    PTTBot.logout()
+    ptt_bot.logout()

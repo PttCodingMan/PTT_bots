@@ -27,25 +27,25 @@ def getPW():
 
 if __name__ == '__main__':
     os.system('cls')
-    PTTBot = PTT.Library(
+    ptt_bot = PTT.Library(
         # LogLevel=PTT.LogLevel.TRACE
     )
 
     ID, Password = getPW()
 
     try:
-        PTTBot.login(
+        ptt_bot.login(
             ID,
             Password,
             # KickOtherLogin=True
         )
     except PTT.Exceptions.LoginError:
-        PTTBot.log('登入失敗')
+        ptt_bot.log('登入失敗')
         sys.exit()
 
     TargetPreTime = '22:01'
 
-    Board = 'Test'
+    current_board = 'Test'
     Title = '零秒PO文新版演算法測試'
     Content = '''
 零秒 PO文新版演算法
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     Content = Content.replace('\n', '\r\n')
 
     print(f'TargetPreTime {TargetPreTime}')
-    print(f'Board {Board}')
+    print(f'Board {current_board}')
     print(f'Title {Title}')
     print(f'Content {Content}')
 
@@ -67,11 +67,11 @@ if __name__ == '__main__':
             StartTime = EndTime = time.time()
             NextMin = False
 
-            LastTime = CurrentTime = PTTBot.getTime()
+            LastTime = CurrentTime = ptt_bot.getTime()
             while EndTime - StartTime < SlowDetectTime:
                 time.sleep(1)
                 EndTime = time.time()
-                CurrentTime = PTTBot.getTime()
+                CurrentTime = ptt_bot.getTime()
 
                 if LastTime != CurrentTime:
                     NextMin = True
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
                 LastTime = CurrentTime
                 # print(CurrentTime, end='\r')
-                PTTBot.log(CurrentTime)
+                ptt_bot.log(CurrentTime)
                 if TargetPreTime == CurrentTime:
                     Ready = True
 
@@ -89,19 +89,19 @@ if __name__ == '__main__':
             if Ready:
                 print('最後準備')
                 while LastTime == CurrentTime:
-                    CurrentTime = PTTBot.getTime()
+                    CurrentTime = ptt_bot.getTime()
                 break
             else:
                 while LastTime == CurrentTime:
                     time.sleep(1)
-                    CurrentTime = PTTBot.getTime()
-                    PTTBot.log(f'slow area {CurrentTime}')
+                    CurrentTime = ptt_bot.getTime()
+                    ptt_bot.log(f'slow area {CurrentTime}')
                     # print(f'slow area {CurrentTime}', end='\r')
 
             # 批踢踢的一分鐘過了
 
-        PTTBot.post(
-            Board,
+        ptt_bot.post(
+            current_board,
             Title,
             Content,
             2,
@@ -115,4 +115,4 @@ if __name__ == '__main__':
         pass
 
     print('登出                 ')
-    PTTBot.logout()
+    ptt_bot.logout()

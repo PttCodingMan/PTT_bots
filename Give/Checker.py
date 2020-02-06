@@ -24,17 +24,17 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
 
-    PTTBot = PTT.Library()
-    PTTBot.login(ID, Password, KickOtherLogin=True)
+    ptt_bot = PTT.Library()
+    ptt_bot.login(ID, Password, KickOtherLogin=True)
 
-    Board = 'give'
+    current_board = 'give'
 
-    NewestIndex = PTTBot.getNewestIndex(
+    NewestIndex = ptt_bot.getNewestIndex(
         PTT.IndexType.BBS,
-        Board,
+        current_board,
     )
 
-    print(f'{Board} 板最新編號 {NewestIndex}')
+    print(f'{current_board} 板最新編號 {NewestIndex}')
 
     SuspectList = []
     CheckList = [
@@ -66,8 +66,8 @@ if __name__ == '__main__':
 
         # print(f'讀取 {CurrentIndex}')
 
-        Post = PTTBot.getPost(
-            Board,
+        Post = ptt_bot.getPost(
+            current_board,
             PostIndex=CurrentIndex,
         )
 

@@ -32,23 +32,23 @@ if __name__ == '__main__':
 
     try:
 
-        PTTBot = PTT.Library()
+        ptt_bot = PTT.Library()
         try:
-            PTTBot.login(
+            ptt_bot.login(
                 ID,
                 Password
             )
         except PTT.Exceptions.LoginError:
-            PTTBot.log('登入失敗')
+            ptt_bot.log('登入失敗')
             sys.exit()
 
-        Board = 'QQBoard'
+        current_board = 'QQBoard'
 
-        NewIndex = PTTBot.getNewestIndex(
+        NewIndex = ptt_bot.getNewestIndex(
             PTT.IndexType.BBS,
-            Board
+            current_board
         )
-        print(f'{Board} 最新文章編號 {NewIndex}')
+        print(f'{current_board} 最新文章編號 {NewIndex}')
 
         find = False
 
@@ -56,8 +56,8 @@ if __name__ == '__main__':
 
             print(f'文章編號 {NewIndex - index}')
 
-            Post = PTTBot.getPost(
-                Board,
+            Post = ptt_bot.getPost(
+                current_board,
                 PostIndex=NewIndex - index
             )
 
@@ -79,4 +79,4 @@ if __name__ == '__main__':
         traceback.print_tb(e.__traceback__)
         print(e)
 
-    PTTBot.logout()
+    ptt_bot.logout()

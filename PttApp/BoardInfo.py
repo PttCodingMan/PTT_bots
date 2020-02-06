@@ -24,23 +24,23 @@ try:
     # Loginout()
     # ThreadingTest()
 
-    PTTBot = PTT.Library(
+    ptt_bot = PTT.Library(
         # LogLevel=PTT.LogLevel.TRACE,
         # LogLevel=PTT.LogLevel.DEBUG,
         # Host=PTT.Host.PTT2
     )
     try:
-        PTTBot.login(
+        ptt_bot.login(
             ID,
             Password,
             # KickOtherLogin=True
         )
         pass
     except PTT.Exceptions.LoginError:
-        PTTBot.log('登入失敗')
+        ptt_bot.log('登入失敗')
         sys.exit()
 
-    BoardList = PTTBot.getBoardList()
+    BoardList = ptt_bot.getBoardList()
     # print(' '.join(BoardList))
     print(f'總共有 {len(BoardList)} 個板名')
     print(f'總共有 {len(set(BoardList))} 個不重複板名')
@@ -52,7 +52,7 @@ try:
     # TempStr = ''
     for board in BoardList:
         try:
-            BoardInfo = PTTBot.getBoardInfo(board)
+            BoardInfo = ptt_bot.getBoardInfo(board)
         except PTT.Exceptions.NoSuchBoard:
             print(f'No Such Board {board}')
             ErrorList.append(board)
@@ -108,4 +108,4 @@ except Exception as e:
 except KeyboardInterrupt:
     pass
 
-PTTBot.logout()
+ptt_bot.logout()

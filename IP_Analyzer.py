@@ -14,16 +14,16 @@ from PTTLibrary import PTT
 import Util
 
 # False True
-Ask = False
-Publish = False
-Mail = False
+ask = False
+publish = False
+mail = False
 
 # Test = False
-AuthorList = dict()
-IPList = dict()
-PublishContent = None
-NewLine = '\r\n'
-PTTBot = PTT.Library(
+author_list = dict()
+ip_list = dict()
+publish_content = None
+new_line = '\r\n'
+ptt_bot = PTT.Library(
     # LogLevel=PTT.LogLevel.DEBUG,
 )
 
@@ -36,8 +36,8 @@ def PostHandler(Post):
     if DeleteStatus != PTT.PostDeleteStatus.NotDeleted:
         return
 
-    global AuthorList
-    global IPList
+    global author_list
+    global ip_list
 
     Author = Post.getAuthor()
     if Author is None:
@@ -99,20 +99,20 @@ def PostHandler(Post):
 
 def MultiPO(Board, Moderators, DaysAgo):
 
-    global AuthorList
-    global IPList
-    global NewLine
-    global PTTBot
-    global Publish
-    global Ask
-    global Mail
+    global author_list
+    global ip_list
+    global new_line
+    global ptt_bot
+    global publish
+    global ask
+    global mail
 
     Util.PTTBot = PTTBot
-    Util.PostSearch = None
-    Util.Board = Board
+    Util.post_search = None
+    Util.current_board = Board
     Util.Moderators = Moderators
 
-    global PublishContent
+    global publish_content
     if PublishContent is None:
 
         PublishContent = '此內容由 IP 分析程式產生' + NewLine
@@ -125,12 +125,12 @@ def MultiPO(Board, Moderators, DaysAgo):
     StartTime = time.time()
     AuthorList = dict()
     IPList = dict()
-    CurrentDate = Util.getDate(DaysAgo)
+    CurrentDate = Util.get_date(DaysAgo)
 
     PTTBot.log(f'開始 {Board} 板 IP 分析')
     PTTBot.log(f'從 {CurrentDate} 開始分析')
 
-    Start, _ = Util.findPostRrange(DaysAgo, show=False)
+    Start, _ = Util.find_post_rrange(DaysAgo, show=False)
     NewestIndex = PTTBot.getNewestIndex(
         PTT.IndexType.Board,
         Board=Board,
@@ -140,7 +140,7 @@ def MultiPO(Board, Moderators, DaysAgo):
 
     ErrorPostList, DeleteCount = PTTBot.crawlBoard(
         PostHandler,
-        Util.Board,
+        Util.current_board,
         StartIndex=Start,
         EndIndex=End,
     )
@@ -258,19 +258,19 @@ if __name__ == '__main__':
         ID = input('請輸入帳號: ')
         Password = getpass.getpass('請輸入密碼: ')
 
-    PTTBot.login(ID, Password, KickOtherLogin=True)
+    ptt_bot.login(ID, Password, KickOtherLogin=True)
 
-    for (Board, ModeratorList, MaxPost) in SearchList:
-        MultiPO(Board, ModeratorList, MaxPost)
+    for (current_board, ModeratorList, MaxPost) in SearchList:
+        MultiPO(current_board, ModeratorList, MaxPost)
 
-    PublishContent += NewLine + '內容如有失準，歡迎告知。' + NewLine
-    PublishContent += 'CodingMan'
+    publish_content += new_line + '內容如有失準，歡迎告知。' + new_line
+    publish_content += 'CodingMan'
 
-    if Publish:
-        CurrentDate = Util.getDate(1)
+    if publish:
+        CurrentDate = Util.get_date(1)
 
-        PTTBot.post('Test', CurrentDate + ' 多 PO 結果', PublishContent, 1, 0)
-        PTTBot.log('在 Test 板發文成功')
+        ptt_bot.post('Test', CurrentDate + ' 多 PO 結果', publish_content, 1, 0)
+        ptt_bot.log('在 Test 板發文成功')
     else:
-        PTTBot.log('取消備份')
-    PTTBot.logout()
+        ptt_bot.log('取消備份')
+    ptt_bot.logout()
