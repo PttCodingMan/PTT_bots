@@ -22,8 +22,8 @@ search_list = [
 ]
 
 ask = False
-publish = False
-mail = False
+publish = True
+mail = True
 # False True
 
 author_list = dict()
@@ -220,9 +220,9 @@ def multi_po(board, moderators, max_post):
         publish = (choise == 'y') or (choise == '')
 
     if mail:
-        for Moderator in Util.Moderators:
-            ptt_bot.mail(Moderator, title, content, 0)
-            ptt_bot.log('寄信給 ' + Moderator + ' 成功')
+        for moderator in Util.Moderators:
+            ptt_bot.mail(moderator, title, content, 0)
+            ptt_bot.log('寄信給 ' + moderator + ' 成功')
     else:
         ptt_bot.log('取消寄信')
 
