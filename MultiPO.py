@@ -13,7 +13,7 @@ from datetime import date, timedelta
 from PTTLibrary import PTT
 import Util
 
-SearchList = [
+search_list = [
     ('Gossiping', ['Bignana', 'xianyao'], 5),
     ('Wanted', ['LittleCalf', 'somisslove'], 3),
     ('give', ['gogin'], 3),
@@ -21,210 +21,210 @@ SearchList = [
     ('Gamesale', ['mithralin'], 1),
 ]
 
-Ask = False
-Publish = True
-Mail = True
+ask = False
+publish = False
+mail = False
 # False True
 
-AuthorList = dict()
-IPList = dict()
-PublishContent = None
-NewLine = '\r\n'
+author_list = dict()
+ip_list = dict()
+publish_content = None
+new_line = '\r\n'
 
 
-def PostHandler(Post):
-    if Post is None:
+def post_handler(post_info):
+    if post_info is None:
         return
-    global AuthorList
-    global IPList
+    global author_list
+    global ip_list
 
-    Author = Post.getAuthor()
-    if '(' in Author:
-        Author = Author[:Author.find('(')].strip()
+    author = post_info.author
+    if '(' in author:
+        author = author[:author.find('(')].strip()
 
-    # Author is OK
-    Title = Post.getTitle()
-    DeleteStatus = Post.getDeleteStatus()
-    IP = Post.getIP()
+    # author is OK
+    title = post_info.title
+    delete_status = post_info.delete_status
+    ip = post_info.ip
 
-    if DeleteStatus == PTT.PostDeleteStatus.ByAuthor:
-        Title = '(本文已被刪除) [' + Author + ']'
-    elif DeleteStatus == PTT.PostDeleteStatus.ByModerator:
-        Title = '(本文已被刪除) <' + Author + '>'
-    elif DeleteStatus == PTT.PostDeleteStatus.ByUnknow:
-        # Title = '(本文已被刪除) <' + Author + '>'
+    if delete_status == PTT.data_type.PostDeleteStatus.AUTHOR:
+        title = '(本文已被刪除) [' + author + ']'
+    elif delete_status == PTT.data_type.PostDeleteStatus.MODERATOR:
+        title = '(本文已被刪除) <' + author + '>'
+    elif delete_status == PTT.data_type.PostDeleteStatus.UNKNOWN:
+        # title = '(本文已被刪除) <' + author + '>'
         pass
 
-    if Title is None:
-        Title = ''
-    # Title is OK
+    if title is None:
+        title = ''
+    # title is OK
 
-    # print(f'==>{Author}<==>{Title}<')
+    # print(f'==>{author}<==>{title}<')
 
-    if Author not in AuthorList:
-        AuthorList[Author] = []
+    if author not in author_list:
+        author_list[author] = []
 
-    if IP is not None and IP not in IPList:
-        IPList[IP] = []
+    if ip is not None and ip not in ip_list:
+        ip_list[ip] = []
 
-    if DeleteStatus == PTT.PostDeleteStatus.NotDeleted:
-        if '[公告]' in Title:
+    if delete_status == PTT.data_type.PostDeleteStatus.NOT_DELETED:
+        if '[公告]' in title:
             return
-        if IP is not None:
-            IPList[IP].append(Author + '     □ ' + Title)
+        if ip is not None:
+            ip_list[ip].append(author + '     □ ' + title)
 
-    AuthorList[Author].append(Title)
+    author_list[author].append(title)
 
 
-def MultiPO(Board, Moderators, MaxPost):
+def multi_po(board, moderators, max_post):
 
-    global AuthorList
-    global IPList
-    global NewLine
-    global PTTBot
-    global Publish
-    global Ask
-    global Mail
+    global author_list
+    global ip_list
+    global new_line
+    global ptt_bot
+    global publish
+    global ask
+    global mail
     global dayAgo
 
-    Util.PTTBot = PTTBot
-    Util.PostSearch = f'({Board})'
-    Util.Moderators = Moderators
+    Util.ptt_bot = ptt_bot
+    Util.post_search = f'({board})'
+    Util.Moderators = moderators
 
-    global PublishContent
-    if PublishContent is None:
+    global publish_content
+    if publish_content is None:
 
-        PublishContent = '此內容由抓超貼程式產生' + NewLine
-        PublishContent += '由 CodingMan 透過 PTT Library 開發，' + NewLine * 2
+        publish_content = '此內容由抓超貼程式產生' + new_line
+        publish_content += '由 CodingMan 透過 PTT Library 開發，' + new_line * 2
 
-        PublishContent += 'PTT Library: https://tinyurl.com/umqff3v' + NewLine
-        PublishContent += '開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual' + NewLine
-        PublishContent += '抓超貼程式: https://github.com/PttCodingMan/PTTBots' + NewLine * 2
+        publish_content += 'PTT Library: https://tinyurl.com/umqff3v' + new_line
+        publish_content += '開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual' + new_line
+        publish_content += '抓超貼程式: https://github.com/PttCodingMan/PTTBots' + new_line * 2
 
-        PublishContent += f'PTT Library 版本: {PTTBot.getVersion()}' + NewLine
+        publish_content += f'PTT Library 版本: {PTT.version.V}' + new_line
 
-    StartTime = time.time()
-    AuthorList = dict()
-    IPList = dict()
-    CurrentDate = Util.getDate(dayAgo)
+    start_time = time.time()
+    author_list = dict()
+    ip_list = dict()
+    current_date = Util.get_date(dayAgo)
 
-    PTTBot.log(f'開始 {Board} 板昨天的超貼偵測')
-    PTTBot.log('日期: ' + CurrentDate)
-    Start, End = Util.findPostRrange(dayAgo, show=False)
-    PTTBot.log('編號範圍 ' + str(Start) + ' ~ ' + str(End))
+    ptt_bot.log(f'開始 {board} 板昨天的超貼偵測')
+    ptt_bot.log('日期: ' + current_date)
+    start, end = Util.find_post_range(dayAgo, show=False)
+    ptt_bot.log('編號範圍 ' + str(start) + ' ~ ' + str(end))
 
-    ErrorPostList, DeleteCount = PTTBot.crawlBoard(
-        PostHandler,
-        PTT.IndexType.BBS,
-        Util.Board,
-        StartIndex=Start,
-        EndIndex=End,
-        SearchType=Util.PostSearchType,
-        SearchCondition=Util.PostSearch,
-        Query=True,
+    ErrorPostList, DeleteCount = ptt_bot.crawl_board(
+        PTT.data_type.IndexType.BBS,
+        post_handler,
+        Util.current_board,
+        start_index=start,
+        end_index=end,
+        search_type=Util.post_search_type,
+        search_condition=Util.post_search,
+        query=True,
     )
 
-    EndTime = time.time()
+    end_time = time.time()
 
-    MultiPOResult = ''
-    for Suspect, TitleAuthorList in AuthorList.items():
+    multi_po_result = ''
+    for Suspect, TitleAuthorList in author_list.items():
 
-        if len(TitleAuthorList) <= MaxPost:
+        if len(TitleAuthorList) <= max_post:
             continue
         # print('=' * 5 + ' ' + Suspect + ' ' + '=' * 5)
 
-        if MultiPOResult != '':
-            MultiPOResult += NewLine
-        for Title in TitleAuthorList:
-            if not Title.startswith('R:'):
-                MultiPOResult += CurrentDate + ' ' + \
-                    Suspect + ' □ ' + Title + NewLine
+        if multi_po_result != '':
+            multi_po_result += new_line
+        for title in TitleAuthorList:
+            if not title.startswith('R:'):
+                multi_po_result += current_date + ' ' + \
+                                 Suspect + ' □ ' + title + new_line
             else:
-                MultiPOResult += CurrentDate + ' ' + \
-                    Suspect + ' ' + Title + NewLine
+                multi_po_result += current_date + ' ' + \
+                                 Suspect + ' ' + title + new_line
 
-    IPResult = ''
-    for IP, SuspectList in IPList.items():
+    ip_result = ''
+    for IP, SuspectList in ip_list.items():
         # print('len:', len(SuspectList))
-        if len(SuspectList) <= MaxPost:
+        if len(SuspectList) <= max_post:
             continue
 
         # print('IP:', IP)
-        IPResult += 'IP: ' + IP + NewLine
+        ip_result += 'IP: ' + IP + new_line
 
         for Line in SuspectList:
-            # print('>   ' + CurrentDate + ' ' + Line)
-            IPResult += CurrentDate + ' ' + Line + NewLine
+            # print('>   ' + current_date + ' ' + Line)
+            ip_result += current_date + ' ' + Line + new_line
 
-    Title = CurrentDate + f' {Board} 板超貼結果'
+    title = current_date + f' {board} 板超貼結果'
 
-    PublishContent += NewLine
-    PublishContent += f'◆ {Board} 板超貼結果'
+    publish_content += new_line
+    publish_content += f'◆ {board} 板超貼結果'
 
-    Time = math.ceil(EndTime - StartTime)
-    Min = int(Time / 60)
-    Sec = int(Time % 60)
+    time_temp = math.ceil(end_time - start_time)
+    min_ = int(time_temp / 60)
+    sec = int(time_temp % 60)
 
-    Content = '此內容由抓超貼程式產生' + NewLine
+    content = '此內容由抓超貼程式產生' + new_line
 
-    Content += '共耗時'
-    PublishContent += '共耗時'
-    if Min > 0:
-        Content += f' {Min} 分'
-        PublishContent += f' {Min} 分'
-    Content += f' {Sec} 秒執行完畢' + NewLine * 2
-    PublishContent += f' {Sec} 秒執行完畢' + NewLine * 2
+    content += '共耗時'
+    publish_content += '共耗時'
+    if min_ > 0:
+        content += f' {min_} 分'
+        publish_content += f' {min_} 分'
+    content += f' {sec} 秒執行完畢' + new_line * 2
+    publish_content += f' {sec} 秒執行完畢' + new_line * 2
 
-    Content += '此程式是由 CodingMan 透過 PTT Library 開發，' + NewLine * 2
-    Content += f'蒐集範圍為 ALLPOST 搜尋 ({Board}) 情況下編號 ' + \
-        str(Start) + ' ~ ' + str(End) + NewLine
-    Content += f'共 {End - Start + 1} 篇文章' + NewLine * 2
+    content += '此程式是由 CodingMan 透過 PTT Library 開發，' + new_line * 2
+    content += f'蒐集範圍為 ALLPOST 搜尋 ({board}) 情況下編號 ' + \
+               str(start) + ' ~ ' + str(end) + new_line
+    content += f'共 {end - start + 1} 篇文章' + new_line * 2
 
-    PublishContent += f'    蒐集範圍為 ALLPOST 搜尋 ({Board}) 情況下編號 ' + \
-        str(Start) + ' ~ ' + str(End) + NewLine
-    PublishContent += f'    共 {End - Start + 1} 篇文章' + NewLine * 2
+    publish_content += f'    蒐集範圍為 ALLPOST 搜尋 ({board}) 情況下編號 ' + \
+                       str(start) + ' ~ ' + str(end) + new_line
+    publish_content += f'    共 {end - start + 1} 篇文章' + new_line * 2
 
-    if MultiPOResult != '':
-        Content += MultiPOResult
+    if multi_po_result != '':
+        content += multi_po_result
 
-        MultiPOResult = MultiPOResult.strip()
-        for line in MultiPOResult.split(NewLine):
-            PublishContent += '    ' + line + NewLine
+        multi_po_result = multi_po_result.strip()
+        for line in multi_po_result.split(new_line):
+            publish_content += '    ' + line + new_line
     else:
-        Content += '◆ 無人違反超貼板規' + NewLine
-        PublishContent += '    ' + '◆ 無人違反超貼板規' + NewLine
+        content += '◆ 無人違反超貼板規' + new_line
+        publish_content += '    ' + '◆ 無人違反超貼板規' + new_line
 
-    if IPResult != '':
-        Content += IPResult
-        IPResult = IPResult.strip()
-        for line in IPResult.split(NewLine):
-            PublishContent += '    ' + line + NewLine
+    if ip_result != '':
+        content += ip_result
+        ip_result = ip_result.strip()
+        for line in ip_result.split(new_line):
+            publish_content += '    ' + line + new_line
     else:
-        Content += NewLine + f'◆ 沒有發現特定 IP 有 {MaxPost + 1} 篇以上文章' + NewLine
-        PublishContent += NewLine + \
-            f'    ◆ 沒有發現特定 IP 有 {MaxPost + 1} 篇以上文章' + NewLine
+        content += new_line + f'◆ 沒有發現特定 IP 有 {max_post + 1} 篇以上文章' + new_line
+        publish_content += new_line + \
+            f'    ◆ 沒有發現特定 IP 有 {max_post + 1} 篇以上文章' + new_line
 
-    Content += NewLine + '內容如有失準，歡迎告知。' + NewLine
-    Content += '此訊息同步發送給 ' + ' '.join(Util.Moderators) + NewLine
-    Content += NewLine
-    Content += ID
+    content += new_line + '內容如有失準，歡迎告知。' + new_line
+    content += '此訊息同步發送給 ' + ' '.join(Util.Moderators) + new_line
+    content += new_line
+    content += pttid
 
-    print(Title)
-    print(Content)
+    print(title)
+    print(content)
 
     # with open('Test.txt', 'w', encoding='utf8') as in_file:
-    #     in_file.write(Content)
+    #     in_file.write(content)
 
-    if Ask:
-        Choise = input('要發佈嗎? [Y]').lower()
-        Publish = (Choise == 'y') or (Choise == '')
+    if ask:
+        choise = input('要發佈嗎? [Y]').lower()
+        publish = (choise == 'y') or (choise == '')
 
-    if Mail:
+    if mail:
         for Moderator in Util.Moderators:
-            PTTBot.mail(Moderator, Title, Content, 0)
-            PTTBot.log('寄信給 ' + Moderator + ' 成功')
+            ptt_bot.mail(Moderator, title, content, 0)
+            ptt_bot.log('寄信給 ' + Moderator + ' 成功')
     else:
-        PTTBot.log('取消寄信')
+        ptt_bot.log('取消寄信')
 
 
 if __name__ == '__main__':
@@ -234,37 +234,38 @@ if __name__ == '__main__':
     try:
         with open('Account.txt') as AccountFile:
             Account = json.load(AccountFile)
-            ID = Account['ID']
-            Password = Account['Password']
+            pttid = Account['ID']
+            password = Account['Password']
     except FileNotFoundError:
-        ID = input('請輸入帳號: ')
-        Password = getpass.getpass('請輸入密碼: ')
+        pttid = input('請輸入帳號: ')
+        password = getpass.getpass('請輸入密碼: ')
 
-    PTTBot = PTT.Library(
+    ptt_bot = PTT.Library(
         # LogLevel=PTT.LogLevel.TRACE
     )
-    PTTBot.login(ID, Password)
+    ptt_bot.login(pttid, password)
 
     try:
-        for (Board, ModeratorList, MaxPost) in SearchList:
-            MultiPO(Board, ModeratorList, MaxPost)
+        for (current_board, ModeratorList, MaxPost) in search_list:
+            multi_po(current_board, ModeratorList, MaxPost)
 
-        PublishContent += NewLine + '歡迎其他板主來信新增檢查清單' + NewLine
-        PublishContent += '內容如有失準，歡迎告知。' + NewLine
-        PublishContent += 'CodingMan'
+        publish_content += new_line + '歡迎其他板主來信新增檢查清單' + new_line
+        publish_content += '內容如有失準，歡迎告知。' + new_line
+        publish_content += 'CodingMan'
 
-        print(PublishContent)
+        print(publish_content)
 
-        if Publish:
-            CurrentDate = Util.getDate(dayAgo)
+        if publish:
+            CurrentDate = Util.get_date(dayAgo)
 
-            PTTBot.post('Test', CurrentDate + ' 超貼結果', PublishContent, 1, 0)
-            PTTBot.log('在 Test 板發文成功')
+            ptt_bot.post('Test', CurrentDate + ' 超貼結果', publish_content, 1, 0)
+            ptt_bot.log('在 Test 板發文成功')
         else:
-            PTTBot.log('取消備份')
-    except Exception:
-        pass
+            ptt_bot.log('取消備份')
+    except Exception as e:
+        traceback.print_tb(e.__traceback__)
+        print(e)
     except KeyboardInterrupt:
         pass
 
-    PTTBot.logout()
+    ptt_bot.logout()

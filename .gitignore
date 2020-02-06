@@ -107,3 +107,5 @@ venv.bak/
 /Account3.txt
 HatePoliticsList*.txt
 /PttApp/Account.txt
+.idea/
+PTTLibrary/

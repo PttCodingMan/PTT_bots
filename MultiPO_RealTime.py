@@ -13,22 +13,22 @@ from datetime import date, timedelta
 from PTTLibrary import PTT
 import Util
 
-Ask = False
-Publish = False
-Mail = True
+ask = False
+publish = False
+mail = True
 # False True
 
-AuthorList = dict()
-IPList = dict()
-PublishContent = None
-NewLine = '\r\n'
+author_list = dict()
+ip_list = dict()
+publish_content = None
+new_line = '\r\n'
 
 
 def PostHandler(Post):
     if Post is None:
         return
-    global AuthorList
-    global IPList
+    global author_list
+    global ip_list
 
     Author = Post.getAuthor()
     if '(' in Author:
@@ -70,20 +70,20 @@ def PostHandler(Post):
 
 def MultiPO(Board, Moderators, MaxPost, Handler):
 
-    global AuthorList
-    global IPList
-    global NewLine
-    global PTTBot
-    global Publish
-    global Ask
-    global Mail
+    global author_list
+    global ip_list
+    global new_line
+    global ptt_bot
+    global publish
+    global ask
+    global mail
     global dayAgo
 
     Util.PTTBot = PTTBot
-    Util.PostSearch = f'({Board})'
+    Util.post_search = f'({Board})'
     Util.Moderators = Moderators
 
-    global PublishContent
+    global publish_content
     if PublishContent is None:
 
         PublishContent = '此內容由抓多 PO 程式產生' + NewLine
@@ -96,21 +96,21 @@ def MultiPO(Board, Moderators, MaxPost, Handler):
     StartTime = time.time()
     AuthorList = dict()
     IPList = dict()
-    CurrentDate = Util.getDate(dayAgo)
+    CurrentDate = Util.get_date(dayAgo)
 
     # PTTBot.log(f'開始 {Board} 板昨天的多 PO 偵測')
     # PTTBot.log('日期: ' + CurrentDate)
-    Start, End = Util.findPostRrange(dayAgo, show=False)
+    Start, End = Util.find_post_rrange(dayAgo, show=False)
     PTTBot.log('編號範圍 ' + str(Start) + ' ~ ' + str(End))
 
     ErrorPostList, DeleteCount = PTTBot.crawlBoard(
         PostHandler,
         PTT.IndexType.BBS,
-        Util.Board,
+        Util.current_board,
         StartIndex=Start,
         EndIndex=End,
-        SearchType=Util.PostSearchType,
-        SearchCondition=Util.PostSearch,
+        SearchType=Util.post_search_type,
+        SearchCondition=Util.post_search,
         Query=True,
     )
 
@@ -219,7 +219,7 @@ HatePoliticsList = dict()
 
 def HatePoliticsHandler(CurrentDate, AuthorList, IPList, MaxPost, Min, Sec):
 
-    global NewLine
+    global new_line
     global HatePoliticsList
 
     MultiPOResult = ''
@@ -291,7 +291,7 @@ def HatePoliticsHandler(CurrentDate, AuthorList, IPList, MaxPost, Min, Sec):
 
     if len(CurrentList) != 0:
         HatePoliticsList.update(CurrentList)
-        CurrentDate = Util.getDate(dayAgo).replace('/', '')
+        CurrentDate = Util.get_date(dayAgo).replace('/', '')
         with open(f'HatePoliticsList_{CurrentDate}.txt', 'w', encoding='utf8') as File:
             json.dump(HatePoliticsList, File, indent=4, ensure_ascii=False)
     else:
@@ -322,7 +322,7 @@ if __name__ == '__main__':
         Password = getpass.getpass('請輸入密碼: ')
 
     try:
-        CurrentDate = Util.getDate(dayAgo).replace('/', '')
+        CurrentDate = Util.get_date(dayAgo).replace('/', '')
         with open(f'HatePoliticsList_{CurrentDate}.txt', encoding='utf8') as File:
             HatePoliticsList = json.load(File)
     except Exception as e:
@@ -332,25 +332,25 @@ if __name__ == '__main__':
         print('無法讀取 HatePoliticsList.txt')
         HatePoliticsList = dict()
     
-    LastDate = Util.getDate(dayAgo)
+    LastDate = Util.get_date(dayAgo)
 
-    PTTBot = PTT.Library(
+    ptt_bot = PTT.Library(
         # LogLevel=PTT.LogLevel.TRACE
     )
     try:
-        PTTBot.login(
+        ptt_bot.login(
             ID,
             Password,
             KickOtherLogin=True
         )
     except PTT.Exceptions.LoginError:
-        PTTBot.log('登入失敗')
+        ptt_bot.log('登入失敗')
         sys.exit()
     except PTT.Exceptions.ConnectError:
-        PTTBot.log('登入失敗')
+        ptt_bot.log('登入失敗')
         sys.exit()
     except PTT.Exceptions.ConnectionClosed:
-        PTTBot.log('登入失敗')
+        ptt_bot.log('登入失敗')
         sys.exit()
 
     Index = 0
@@ -359,10 +359,10 @@ if __name__ == '__main__':
         while LastIndex == Index:
             Time = strftime('%H:%M:%S')
             try:
-                CurrentDate = Util.getDate(dayAgo)
+                CurrentDate = Util.get_date(dayAgo)
                 if CurrentDate != LastDate:
                     # 新的一天!!!清空清單
-                    PTTBot.logout()
+                    ptt_bot.logout()
 
                     print('半夜休息中')
 
@@ -372,9 +372,9 @@ if __name__ == '__main__':
                     LastDate = CurrentDate
                     HatePoliticsList = dict()
 
-                    PTTBot.login(ID, Password)
+                    ptt_bot.login(ID, Password)
 
-                Index = PTTBot.getNewestIndex(
+                Index = ptt_bot.getNewestIndex(
                     PTT.IndexType.BBS,
                     Board='ALLPOST',
                     SearchType=PTT.PostSearchType.Keyword,
@@ -383,35 +383,35 @@ if __name__ == '__main__':
             except PTT.Exceptions.ConnectionClosed:
                 while True:
                     try:
-                        PTTBot.login(
+                        ptt_bot.login(
                             ID,
                             Password,
                             KickOtherLogin=True
                         )
                         break
                     except PTT.Exceptions.LoginError:
-                        PTTBot.log('登入失敗')
+                        ptt_bot.log('登入失敗')
                         time.sleep(1)
                     except PTT.Exceptions.ConnectError:
-                        PTTBot.log('登入失敗')
+                        ptt_bot.log('登入失敗')
                         time.sleep(1)
                     except PTT.Exceptions.ConnectionClosed:
-                        PTTBot.log('登入失敗')
+                        ptt_bot.log('登入失敗')
                         time.sleep(1)
             except PTT.Exceptions.UseTooManyResources:
                 while True:
                     try:
-                        PTTBot.login(
+                        ptt_bot.login(
                             ID,
                             Password,
                             KickOtherLogin=True
                         )
                         break
                     except PTT.Exceptions.LoginError:
-                        PTTBot.log('登入失敗')
+                        ptt_bot.log('登入失敗')
                         time.sleep(1)
                     except PTT.Exceptions.ConnectError:
-                        PTTBot.log('登入失敗')
+                        ptt_bot.log('登入失敗')
                         time.sleep(1)
             print(f'{Time} 最新編號 {Index}', end='\r')
             if LastIndex != Index:
@@ -421,7 +421,7 @@ if __name__ == '__main__':
             LastIndex = Index
             time.sleep(5)
 
-        for (Board, ModeratorList, MaxPost, Handler) in SearchList:
-            MultiPO(Board, ModeratorList, MaxPost, Handler)
+        for (current_board, ModeratorList, MaxPost, Handler) in SearchList:
+            MultiPO(current_board, ModeratorList, MaxPost, Handler)
 
-    PTTBot.logout()
+    ptt_bot.logout()

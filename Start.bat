@@ -2,4 +2,4 @@
 cls
 
 pip install PTTLibrary --upgrade
-python MultiPO.py
+python multi_po.py

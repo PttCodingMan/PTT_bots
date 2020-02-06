@@ -4,48 +4,48 @@ import os
 from PTTLibrary import PTT
 from datetime import date, timedelta, datetime
 
-PTTBot = None
-Board = 'ALLPOST'
-PostSearchType = PTT.PostSearchType.Keyword
-PostSearch = '(Wanted)'
+ptt_bot = None
+current_board = 'ALLPOST'
+post_search_type = PTT.data_type.PostSearchType.KEYWORD
+post_search = '(Wanted)'
 Moderators = ['gogin']
 
 
-def getDate(TimeDel, PTTSytle=True):
-    PassDay = date.today() - timedelta(TimeDel)
+def get_date(time_del, ptt_sytle=True):
+    pass_day = date.today() - timedelta(time_del)
 
-    PassDate = PassDay.strftime("%m/%d")
-    # print('>' + PassDate + '<')
-    if PTTSytle and PassDate.startswith('0'):
-        PassDate = PassDate[1:]
+    pass_date = pass_day.strftime("%m/%d")
+    # print('>' + pass_date + '<')
+    if ptt_sytle and pass_date.startswith('0'):
+        pass_date = pass_date[1:]
 
-    return PassDate
+    return pass_date
 
 
-def getTarget(Date0, Date1):
+def get_target(date0, date1):
 
-    Today = int(datetime.today().strftime('%m%d'))
+    today = int(datetime.today().strftime('%m%d'))
 
-    if int(Date0) > Today:
-        Date0 = '0' + Date0
+    if int(date0) > today:
+        date0 = '0' + date0
     else:
-        Date0 = '1' + Date0
+        date0 = '1' + date0
 
-    if int(Date1) > Today:
-        Date1 = '0' + Date1
+    if int(date1) > today:
+        date1 = '0' + date1
     else:
-        Date1 = '1' + Date1
+        date1 = '1' + date1
 
-    return int(Date0 + Date1)
+    return int(date0 + date1)
 
 
 HistoryList = dict()
 
 
-def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False, OldestIndex=1):
+def find_current_date_first(biggest_target, newest_index, day_ago, show=False, oldest_index=1):
 
-    global PTTBot
-    global Board
+    global ptt_bot
+    global current_board
     global Moderators
 
     # global HistoryList
@@ -53,171 +53,171 @@ def findCurrentDateFirst(BiggestTarget, NewestIndex, DayAgo, show=False, OldestI
     # if str(DayAgo) in HistoryList:
     #     return HistoryList[str(DayAgo)]
 
-    CurrentDate_0 = getDate(
-        DayAgo + 1, PTTSytle=False).replace('/', '').strip()
-    CurrentDate_1 = getDate(DayAgo, PTTSytle=False).replace('/', '').strip()
-    FinishTarget = getTarget(CurrentDate_0, CurrentDate_1)
+    current_date_0 = get_date(
+        day_ago + 1, ptt_sytle=False).replace('/', '').strip()
+    current_date_1 = get_date(day_ago, ptt_sytle=False).replace('/', '').strip()
+    finish_target = get_target(current_date_0, current_date_1)
 
     if show:
-        print(f'CurrentDate_0 {CurrentDate_0}')
-        print(f'CurrentDate_1 {CurrentDate_1}')
-        print(f'FinishTarget {FinishTarget}')
+        print(f'current_date_0 {current_date_0}')
+        print(f'current_date_1 {current_date_1}')
+        print(f'finish_target {finish_target}')
 
-    StartIndex = OldestIndex
-    EndIndex = NewestIndex
+    start_index = oldest_index
+    end_index = newest_index
 
     if show:
-        print(f'StartIndex {StartIndex}')
-        print(f'EndIndex {EndIndex}')
+        print(f'start_index {start_index}')
+        print(f'end_index {end_index}')
 
-    CurrentIndex = int((StartIndex + EndIndex) / 2)
-    RetryIndex = 0
+    current_index = int((start_index + end_index) / 2)
+    retry_index = 0
 
     while True:
         if show:
-            PTTBot.log('嘗試: ' + str(CurrentIndex))
-            print('Board:', Board)
-            print('CurrentIndex:', CurrentIndex)
-            print('PostSearchType:', PostSearchType)
-            print('PostSearch:', PostSearch)
+            ptt_bot.log('嘗試: ' + str(current_index))
+            print('Board:', current_board)
+            print('current_index:', current_index)
+            print('PostSearchType:', post_search_type)
+            print('PostSearch:', post_search)
 
-        Post_1 = PTTBot.getPost(
-            Board,
-            PostIndex=CurrentIndex,
-            SearchType=PostSearchType,
-            SearchCondition=PostSearch,
-            Query=True
+        post_1 = ptt_bot.get_post(
+            current_board,
+            post_index=current_index,
+            search_type=post_search_type,
+            search_condition=post_search,
+            query=True
         )
 
-        if Post_1.getListDate() is None:
-            CurrentIndex = StartIndex + RetryIndex
-            RetryIndex += 1
+        if post_1.list_date is None:
+            current_index = start_index + retry_index
+            retry_index += 1
             continue
 
-        Post_0 = None
-        RetryIndex = 0
+        post_0 = None
+        retry_index = 0
         for i in range(1, 40):
 
-            if CurrentIndex - i <= 0:
+            if current_index - i <= 0:
                 break
 
-            Post_0 = PTTBot.getPost(
-                Board,
-                PostIndex=(CurrentIndex - i),
-                SearchType=PostSearchType,
-                SearchCondition=PostSearch,
-                Query=True
+            post_0 = ptt_bot.get_post(
+                current_board,
+                post_index=(current_index - i),
+                search_type=post_search_type,
+                search_condition=post_search,
+                query=True
             )
 
-            if Post_0 is None:
+            if post_0 is None:
                 continue
-            elif Post_0.getListDate() is None:
+            elif post_0.list_date is None:
                 continue
 
             if show:
-                PTTBot.log('找到上一篇: ' + str(CurrentIndex - i))
+                ptt_bot.log('找到上一篇: ' + str(current_index - i))
             break
 
-        if Post_0 is None:
-            CurrentDate_0 = '0000'
+        if post_0 is None:
+            current_date_0 = '0000'
         else:
-            CurrentDate_0 = Post_0.getListDate().replace('/', '').strip()
+            current_date_0 = post_0.list_date.replace('/', '').strip()
 
-        if len(CurrentDate_0) < 4:
-            CurrentDate_0 = '0' + CurrentDate_0
-        CurrentDate_1 = Post_1.getListDate().replace('/', '').strip()
-        if len(CurrentDate_1) < 4:
-            CurrentDate_1 = '0' + CurrentDate_1
-        CurrentTarget = getTarget(CurrentDate_0, CurrentDate_1)
+        if len(current_date_0) < 4:
+            current_date_0 = '0' + current_date_0
+        current_date_1 = post_1.list_date.replace('/', '').strip()
+        if len(current_date_1) < 4:
+            current_date_1 = '0' + current_date_1
+        current_target = get_target(current_date_0, current_date_1)
 
         if show:
-            print('CurrentDate_0: ' + CurrentDate_0)
-            print('CurrentDate_1: ' + CurrentDate_1)
-            print('CurrentTarget: ' + str(CurrentTarget))
-            print('FinishTarget: ' + str(FinishTarget))
-            print(StartIndex)
-            print(EndIndex)
+            print('current_date_0: ' + current_date_0)
+            print('current_date_1: ' + current_date_1)
+            print('current_target: ' + str(current_target))
+            print('finish_target: ' + str(finish_target))
+            print(start_index)
+            print(end_index)
 
-        if CurrentTarget == FinishTarget:
-            HistoryList[str(DayAgo)] = CurrentIndex
-            return CurrentIndex
+        if current_target == finish_target:
+            HistoryList[str(day_ago)] = current_index
+            return current_index
 
-        if CurrentTarget > FinishTarget:
-            EndIndex = CurrentIndex - 1
-        elif CurrentTarget < FinishTarget:
-            StartIndex = CurrentIndex + 1
-        CurrentIndex = int((StartIndex + EndIndex) / 2)
+        if current_target > finish_target:
+            end_index = current_index - 1
+        elif current_target < finish_target:
+            start_index = current_index + 1
+        current_index = int((start_index + end_index) / 2)
 
 
-def findPostRrange(DayAgo, show=False):
-    global PTTBot
-    global Board
+def find_post_range(DayAgo, show=False):
+    global ptt_bot
+    global current_board
     global Moderators
-    global PostSearchType
-    global PostSearch
+    global post_search_type
+    global post_search
 
     if show:
-        print('Board:', Board)
-        print('SearchType:', PostSearchType)
-        print('Search:', PostSearch)
+        print('Board:', current_board)
+        print('SearchType:', post_search_type)
+        print('Search:', post_search)
 
-    if PostSearch is not None:
-        NewestIndex = PTTBot.getNewestIndex(
-            PTT.IndexType.BBS,
-            Board=Board,
-            SearchType=PostSearchType,
-            SearchCondition=PostSearch,
+    if post_search is not None:
+        newest_index = ptt_bot.get_newest_index(
+            PTT.data_type.IndexType.BBS,
+            board=current_board,
+            search_type=post_search_type,
+            search_condition=post_search,
         )
     else:
-        NewestIndex = PTTBot.getNewestIndex(
+        newest_index = ptt_bot.getNewestIndex(
             PTT.IndexType.BBS,
-            Board=Board,
+            board=current_board,
         )
 
-    if NewestIndex == -1:
-        PTTBot.log('取得 ' + Board + ' 板最新文章編號失敗')
+    if newest_index == -1:
+        ptt_bot.log('取得 ' + current_board + ' 板最新文章編號失敗')
         sys.exit()
-    PTTBot.log('取得 ' + Board + ' 板最新文章編號: ' + str(NewestIndex))
+    ptt_bot.log('取得 ' + current_board + ' 板最新文章編號: ' + str(newest_index))
 
-    if PostSearch is not None:
-        Post = PTTBot.getPost(
-            Board,
-            PostIndex=NewestIndex,
-            SearchType=PostSearchType,
-            SearchCondition=PostSearch,
-            Query=True
+    if post_search is not None:
+        post_info = ptt_bot.get_post(
+            current_board,
+            post_index=newest_index,
+            search_type=post_search_type,
+            search_condition=post_search,
+            query=True
         )
     else:
-        Post = PTTBot.getPost(
-            Board,
-            PostIndex=NewestIndex,
-            Query=True
+        post_info = ptt_bot.getPost(
+            current_board,
+            post_index=newest_index,
+            query=True
         )
 
-    CurrentDate_0 = Post.getListDate().replace('/', '').strip()
-    if len(CurrentDate_0) < 4:
-        CurrentDate_0 = '0' + CurrentDate_0
-    CurrentDate_1 = CurrentDate_0
-    if len(CurrentDate_1) < 4:
-        CurrentDate_1 = '0' + CurrentDate_1
+    current_date_0 = post_info.list_date.replace('/', '').strip()
+    if len(current_date_0) < 4:
+        current_date_0 = '0' + current_date_0
+    current_date_1 = current_date_0
+    if len(current_date_1) < 4:
+        current_date_1 = '0' + current_date_1
 
-    BiggestTarget = getTarget(CurrentDate_0, CurrentDate_1)
+    biggest_target = get_target(current_date_0, current_date_1)
     if show:
-        print(f'BiggestTarget {BiggestTarget}')
+        print(f'biggest_target {biggest_target}')
 
-    Start = findCurrentDateFirst(
-        BiggestTarget, NewestIndex, DayAgo, show=False)
+    Start = find_current_date_first(
+        biggest_target, newest_index, DayAgo, show=False)
 
     if show:
         print(f'Start {Start}')
 
     if DayAgo > 0:
-        End = findCurrentDateFirst(
-            BiggestTarget, NewestIndex, DayAgo - 1, show=False, OldestIndex=Start) - 1
+        end = find_current_date_first(
+            biggest_target, newest_index, DayAgo - 1, show=False, oldest_index=Start) - 1
     elif DayAgo == 0:
-        End = NewestIndex
+        end = newest_index
 
     if show:
-        print('Result', Start, End)
+        print('Result', Start, end)
 
-    return Start, End
+    return Start, end
