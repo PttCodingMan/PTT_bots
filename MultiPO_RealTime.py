@@ -39,11 +39,11 @@ def PostHandler(Post):
     DeleteStatus = Post.getDeleteStatus()
     IP = Post.getIP()
 
-    if DeleteStatus == PTT.PostDeleteStatus.ByAuthor:
+    if DeleteStatus == PTT.post_delete_status.ByAuthor:
         Title = '(本文已被刪除) [' + Author + ']'
-    elif DeleteStatus == PTT.PostDeleteStatus.ByModerator:
+    elif DeleteStatus == PTT.post_delete_status.ByModerator:
         Title = '(本文已被刪除) <' + Author + '>'
-    elif DeleteStatus == PTT.PostDeleteStatus.ByUnknow:
+    elif DeleteStatus == PTT.post_delete_status.ByUnknow:
         # Title = '(本文已被刪除) <' + Author + '>'
         pass
 
@@ -59,7 +59,7 @@ def PostHandler(Post):
     if IP is not None and IP not in IPList:
         IPList[IP] = []
 
-    if DeleteStatus == PTT.PostDeleteStatus.NotDeleted:
+    if DeleteStatus == PTT.post_delete_status.NotDeleted:
         if '[公告]' in Title:
             return
         if IP is not None:

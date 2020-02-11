@@ -33,7 +33,7 @@ def PostHandler(Post):
         return
 
     DeleteStatus = Post.getDeleteStatus()
-    if DeleteStatus != PTT.PostDeleteStatus.NotDeleted:
+    if DeleteStatus != PTT.post_delete_status.NotDeleted:
         return
 
     global author_list
@@ -52,11 +52,11 @@ def PostHandler(Post):
         return
 
     Title = Post.getTitle()
-    if DeleteStatus == PTT.PostDeleteStatus.ByAuthor:
+    if DeleteStatus == PTT.post_delete_status.ByAuthor:
         Title = '(本文已被刪除) [' + Author + ']'
-    elif DeleteStatus == PTT.PostDeleteStatus.ByModerator:
+    elif DeleteStatus == PTT.post_delete_status.ByModerator:
         Title = '(本文已被刪除) <' + Author + '>'
-    elif DeleteStatus == PTT.PostDeleteStatus.ByUnknow:
+    elif DeleteStatus == PTT.post_delete_status.ByUnknow:
         # Title = '(本文已被刪除) <' + Author + '>'
         pass
 

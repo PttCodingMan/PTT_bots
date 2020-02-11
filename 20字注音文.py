@@ -28,7 +28,7 @@ def PostHandler(Post):
     if Author not in List:
         List[Author] = []
     
-    if DeleteStatus == PTT.PostDeleteStatus.NotDeleted:
+    if DeleteStatus == PTT.post_delete_status.NotDeleted:
         if '[公告]' in Title:
             return
     else:

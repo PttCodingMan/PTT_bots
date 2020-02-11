@@ -10,7 +10,7 @@ import math
 from datetime import date, timedelta
 # from time import gmtime, strftime
 
-from PTTLibrary import PTT
+from PyPtt import PTT
 import Util
 
 search_list = [
@@ -47,11 +47,11 @@ def post_handler(post_info):
     delete_status = post_info.delete_status
     ip = post_info.ip
 
-    if delete_status == PTT.data_type.PostDeleteStatus.AUTHOR:
+    if delete_status == PTT.data_type.post_delete_status.AUTHOR:
         title = '(本文已被刪除) [' + author + ']'
-    elif delete_status == PTT.data_type.PostDeleteStatus.MODERATOR:
+    elif delete_status == PTT.data_type.post_delete_status.MODERATOR:
         title = '(本文已被刪除) <' + author + '>'
-    elif delete_status == PTT.data_type.PostDeleteStatus.UNKNOWN:
+    elif delete_status == PTT.data_type.post_delete_status.UNKNOWN:
         # title = '(本文已被刪除) <' + author + '>'
         pass
 
@@ -67,7 +67,7 @@ def post_handler(post_info):
     if ip is not None and ip not in ip_list:
         ip_list[ip] = []
 
-    if delete_status == PTT.data_type.PostDeleteStatus.NOT_DELETED:
+    if delete_status == PTT.data_type.post_delete_status.NOT_DELETED:
         if '[公告]' in title:
             return
         if ip is not None:
@@ -114,7 +114,7 @@ def multi_po(board, moderators, max_post):
     ptt_bot.log('編號範圍 ' + str(start) + ' ~ ' + str(end))
 
     ErrorPostList, DeleteCount = ptt_bot.crawl_board(
-        PTT.data_type.IndexType.BBS,
+        PTT.data_type.index_type.BBS,
         post_handler,
         Util.current_board,
         start_index=start,
@@ -240,7 +240,7 @@ if __name__ == '__main__':
         pttid = input('請輸入帳號: ')
         password = getpass.getpass('請輸入密碼: ')
 
-    ptt_bot = PTT.Library(
+    ptt_bot = PTT.API(
         # LogLevel=PTT.LogLevel.TRACE
     )
     ptt_bot.login(pttid, password)

@@ -1,12 +1,12 @@
 
 import sys
 import os
-from PTTLibrary import PTT
+from PyPtt import PTT
 from datetime import date, timedelta, datetime
 
 ptt_bot = None
 current_board = 'ALLPOST'
-post_search_type = PTT.data_type.PostSearchType.KEYWORD
+post_search_type = PTT.data_type.post_search_type.KEYWORD
 post_search = '(Wanted)'
 Moderators = ['gogin']
 
@@ -163,14 +163,14 @@ def find_post_range(DayAgo, show=False):
 
     if post_search is not None:
         newest_index = ptt_bot.get_newest_index(
-            PTT.data_type.IndexType.BBS,
+            PTT.data_type.index_type.BBS,
             board=current_board,
             search_type=post_search_type,
             search_condition=post_search,
         )
     else:
         newest_index = ptt_bot.getNewestIndex(
-            PTT.IndexType.BBS,
+            PTT.data_type.index_type.BBS,
             board=current_board,
         )
 

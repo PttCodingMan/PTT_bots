@@ -71,7 +71,7 @@ if __name__ == '__main__':
             PostIndex=CurrentIndex,
         )
 
-        if Post.getDeleteStatus() != PTT.PostDeleteStatus.NotDeleted:
+        if Post.getDeleteStatus() != PTT.post_delete_status.NotDeleted:
             continue
 
         if '[公告]' in Post.getTitle():
