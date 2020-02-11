@@ -95,13 +95,13 @@ def multi_po(board, moderators, max_post):
     if publish_content is None:
 
         publish_content = '此內容由抓超貼程式產生' + new_line
-        publish_content += '由 CodingMan 透過 PTT Library 開發，' + new_line * 2
+        publish_content += '由 CodingMan 透過 PyPtt 開發，' + new_line * 2
 
-        publish_content += 'PTT Library: https://tinyurl.com/umqff3v' + new_line
-        publish_content += '開發手冊: https://hackmd.io/@CodingMan/PTTLibraryManual' + new_line
-        publish_content += '抓超貼程式: https://github.com/PttCodingMan/PTTBots' + new_line * 2
+        publish_content += 'PyPtt: https://github.com/PttCodingMan/PyPtt' + new_line
+        publish_content += '開發手冊: https://hackmd.io/@CodingMan/PyPttManual' + new_line
+        publish_content += '抓超貼程式: https://git.io/JvC0t' + new_line * 2
 
-        publish_content += f'PTT Library 版本: {PTT.version.V}' + new_line
+        publish_content += f'PyPtt 版本: {PTT.version.V}' + new_line
 
     start_time = time.time()
     author_list = dict()
@@ -175,7 +175,7 @@ def multi_po(board, moderators, max_post):
     content += f' {sec} 秒執行完畢' + new_line * 2
     publish_content += f' {sec} 秒執行完畢' + new_line * 2
 
-    content += '此程式是由 CodingMan 透過 PTT Library 開發，' + new_line * 2
+    content += '此程式是由 CodingMan 透過 PyPtt 開發，' + new_line * 2
     content += f'蒐集範圍為 ALLPOST 搜尋 ({board}) 情況下編號 ' + \
                str(start) + ' ~ ' + str(end) + new_line
     content += f'共 {end - start + 1} 篇文章' + new_line * 2
