@@ -19,4 +19,4 @@
 
 相依函式庫
 -------------------
-###### PTTLibrary
+###### [PyPtt](https://github.com/PttCodingMan/PyPtt)
