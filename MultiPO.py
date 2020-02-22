@@ -94,11 +94,10 @@ def multi_po(board, moderators, max_post):
     global publish_content
     if publish_content is None:
 
-        publish_content = '此內容由抓超貼程式產生' + new_line
+        publish_content = '此內容由抓超貼程式產生並張貼' + new_line
         publish_content += '由 CodingMan 透過 PyPtt 開發，' + new_line * 2
 
         publish_content += 'PyPtt: https://github.com/PttCodingMan/PyPtt' + new_line
-        publish_content += '開發手冊: https://hackmd.io/@CodingMan/PyPttManual' + new_line
         publish_content += '抓超貼程式: https://git.io/JvC0t' + new_line * 2
 
         publish_content += f'PyPtt 版本: {PTT.version.V}' + new_line
