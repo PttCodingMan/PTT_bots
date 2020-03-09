@@ -14,7 +14,7 @@ from PyPtt import PTT
 import Util
 
 search_list = [
-    ('Gossiping', ['Bignana', 'xianyao'], 5),
+    ('Gossiping', ['DreamYeh'], 5),
     ('Wanted', ['LittleCalf', 'somisslove'], 3),
     ('give', ['gogin'], 3),
     ('HatePolitics', ['kero2377'], 5),
