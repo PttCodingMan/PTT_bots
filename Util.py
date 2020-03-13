@@ -8,7 +8,6 @@ ptt_bot = None
 current_board = 'ALLPOST'
 post_search_type = PTT.data_type.post_search_type.KEYWORD
 post_search = '(Wanted)'
-Moderators = ['gogin']
 
 
 def get_date(time_del, ptt_sytle=True):
@@ -46,7 +45,6 @@ def find_current_date_first(biggest_target, newest_index, day_ago, show=False, o
 
     global ptt_bot
     global current_board
-    global Moderators
 
     # global HistoryList
 
@@ -152,7 +150,6 @@ def find_current_date_first(biggest_target, newest_index, day_ago, show=False, o
 def find_post_range(DayAgo, show=False):
     global ptt_bot
     global current_board
-    global Moderators
     global post_search_type
     global post_search
 

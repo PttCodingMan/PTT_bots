@@ -13,17 +13,9 @@ from datetime import date, timedelta
 from PyPtt import PTT
 import Util
 
-search_list = [
-    ('Gossiping', ['DreamYeh'], 5),
-    ('Wanted', ['LittleCalf', 'somisslove'], 3),
-    ('give', ['gogin'], 3),
-    ('HatePolitics', ['kero2377'], 5),
-    ('Gamesale', ['mithralin'], 1),
-]
-
 ask = False
 publish = True
-mail = True
+mail = False
 # False True
 
 author_list = dict()
@@ -76,7 +68,7 @@ def post_handler(post_info):
     author_list[author].append(title)
 
 
-def multi_po(board, moderators, max_post):
+def multi_po(board, max_post):
 
     global author_list
     global ip_list
@@ -89,7 +81,6 @@ def multi_po(board, moderators, max_post):
 
     Util.ptt_bot = ptt_bot
     Util.post_search = f'({board})'
-    Util.Moderators = moderators
 
     global publish_content
     if publish_content is None:
@@ -204,12 +195,12 @@ def multi_po(board, moderators, max_post):
             f'    ◆ 沒有發現特定 IP 有 {max_post + 1} 篇以上文章' + new_line
 
     content += new_line + '內容如有失準，歡迎告知。' + new_line
-    content += '此訊息同步發送給 ' + ' '.join(Util.Moderators) + new_line
+    # content += '此訊息同步發送給 ' + ' '.join(Util.Moderators) + new_line
     content += new_line
-    content += pttid
+    content += ptt_id
 
-    print(title)
-    print(content)
+    # print(title)
+    # print(content)
 
     # with open('Test.txt', 'w', encoding='utf8') as in_file:
     #     in_file.write(content)
@@ -218,46 +209,35 @@ def multi_po(board, moderators, max_post):
         choise = input('要發佈嗎? [Y]').lower()
         publish = (choise == 'y') or (choise == '')
 
-    if mail:
-        for moderator in Util.Moderators:
-            ptt_bot.mail(moderator, title, content, 0)
-            ptt_bot.log('寄信給 ' + moderator + ' 成功')
-    else:
-        ptt_bot.log('取消寄信')
-
 
 if __name__ == '__main__':
 
     dayAgo = 1
 
-    try:
-        with open('Account.txt') as AccountFile:
-            Account = json.load(AccountFile)
-            pttid = Account['ID']
-            password = Account['Password']
-    except FileNotFoundError:
-        pttid = input('請輸入帳號: ')
-        password = getpass.getpass('請輸入密碼: ')
+    current_board = input('請輸入看板名稱: ')
+    max_post = int(input('請輸入每天不得超過幾篇: '))
+    ptt_id = input('請輸入帳號: ')
+    password = input('請輸入密碼: ')
 
     ptt_bot = PTT.API(
         # LogLevel=PTT.LogLevel.TRACE
     )
-    ptt_bot.login(pttid, password)
+    ptt_bot.login(ptt_id, password)
 
     try:
-        for (current_board, ModeratorList, MaxPost) in search_list:
-            multi_po(current_board, ModeratorList, MaxPost)
+        multi_po(current_board, max_post)
 
-        publish_content += new_line + '歡迎其他板主來信新增檢查清單' + new_line
-        publish_content += '內容如有失準，歡迎告知。' + new_line
-        publish_content += 'CodingMan'
+        publish_content += new_line + '超貼工具下載' + new_line
+        publish_content += 'https://github.com/PttCodingMan/PTTBots/releases' + new_line
 
+        CurrentDate = Util.get_date(dayAgo)
+        title = f'{current_board} {CurrentDate} 超貼結果'
+
+        print(title)
         print(publish_content)
 
         if publish:
-            CurrentDate = Util.get_date(dayAgo)
-
-            ptt_bot.post('Test', CurrentDate + ' 超貼結果', publish_content, 1, 0)
+            ptt_bot.post('Test', title, publish_content, 1, 0)
             ptt_bot.log('在 Test 板發文成功')
         else:
             ptt_bot.log('取消備份')
@@ -268,3 +248,5 @@ if __name__ == '__main__':
         pass
 
     ptt_bot.logout()
+
+    input('按 Enter 結束')
