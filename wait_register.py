@@ -71,23 +71,26 @@ while True:
             ptt_bot.log('請稍等一下再登入')
             sys.exit()
 
-        date = time.strftime("%m/%d", time.localtime())
+        if ptt_bot.registered_user:
+            content = '註冊通過!!!!!!!!!!!!!!!!!'
+        else:
+            date = time.strftime("%m/%d", time.localtime())
 
-        start_date = datetime.datetime(
-            2020,
-            3,
-            16)
+            start_date = datetime.datetime(
+                2020,
+                3,
+                16)
 
-        today = datetime.datetime.today()
+            today = datetime.datetime.today()
 
-        delta = today - start_date
-        delta_day = delta.days
+            delta = today - start_date
+            delta_day = delta.days
 
-        delta_pick = 6644 - process_picks
+            delta_pick = 6644 - process_picks
 
-        need_day = int((process_picks / delta_pick) * delta_day)
+            need_day = int(((process_picks / delta_pick) - 1) * delta_day)
 
-        content = f'{date} {process_picks} 預估尚須等待 {need_day} 天'
+            content = f'{date} {process_picks} 預估尚須等待 {need_day} 天'
         print(content)
 
         ptt2_bot.push('CodingMan', PTT.data_type.push_type.ARROW, content, post_aid='1URkAo7l')
