@@ -81,10 +81,13 @@ while True:
         today = datetime.datetime.today()
 
         delta = today - start_date
-        delta = delta.days
-        print(delta)
+        delta_day = delta.days
 
-        content = f'{date} {process_picks} 尚須等待 {process_picks / delta} 天'
+        delta_pick = 6644 - process_picks
+
+        need_day = int((process_picks / delta_pick) * delta_day)
+
+        content = f'{date} {process_picks} 預估尚須等待 {need_day} 天'
         print(content)
 
         ptt2_bot.push('CodingMan', PTT.data_type.push_type.ARROW, content, post_aid='1URkAo7l')
