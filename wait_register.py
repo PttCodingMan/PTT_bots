@@ -78,22 +78,25 @@ while True:
 
             start_date = datetime.datetime(
                 2020,
-                3,
-                16)
+                6,
+                20)
 
             today = datetime.datetime.today()
 
             delta = today - start_date
             delta_day = delta.days
 
-            delta_pick = 6644 - process_picks
+            delta_pick = 8984 - process_picks
 
-            need_day = int(((process_picks / delta_pick) - 1) * delta_day)
+            if delta_pick != 0:
+                need_day = int(((process_picks / delta_pick) - 1) * delta_day)
+                content = f'{date} {process_picks} 預估尚須等待 {need_day} 天'
+            else:
+                content = f'今天為計算起始日無法計算，請明天重新執行'
 
-            content = f'{date} {process_picks} 預估尚須等待 {need_day} 天'
         print(content)
 
-        ptt2_bot.push('CodingMan', PTT.data_type.push_type.ARROW, content, post_aid='1URkAo7l')
+        ptt2_bot.push('CodingMan', PTT.data_type.push_type.ARROW, content, post_aid='1UxO3FTe')
 
     except Exception as e:
         traceback.print_tb(e.__traceback__)
