@@ -6,15 +6,14 @@ import time
 import json
 import random
 import traceback
-import PTTLibrary
 import threading
 
-from PTTLibrary import PTT
+from PyPtt import PTT
 
 
 def getPW():
     try:
-        with open('Account3.txt') as AccountFile:
+        with open('Account.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']
@@ -32,7 +31,7 @@ if __name__ == '__main__':
 
     try:
 
-        ptt_bot = PTT.Library()
+        ptt_bot = PTT.API()
         try:
             ptt_bot.login(
                 ID,
@@ -44,36 +43,33 @@ if __name__ == '__main__':
 
         current_board = 'QQBoard'
 
-        NewIndex = ptt_bot.getNewestIndex(
-            PTT.IndexType.BBS,
-            current_board
+        newest_index = ptt_bot.get_newest_index(
+            PTT.data_type.index_type.BBS,
+            current_board,
         )
-        print(f'{current_board} 最新文章編號 {NewIndex}')
+        print(f'{current_board} 最新文章編號 {newest_index}')
 
         find = False
 
-        for index in range(1, NewIndex + 1):
+        for index in range(0, newest_index + 1):
 
-            print(f'文章編號 {NewIndex - index}')
+            if index % 100 == 0:
+                print(f'文章編號 {newest_index - index}')
 
-            Post = ptt_bot.getPost(
+            post_info = ptt_bot.get_post(
                 current_board,
-                PostIndex=NewIndex - index
-            )
+                post_index=newest_index - index)
 
-            Pushlist = Post.getPushList()
-
-            if Pushlist is None:
+            if post_info.origin_post is None:
                 continue
-            for push in Pushlist:
-                # print(f'Author [{push.getAuthor()}]')
-                if 'QQID' in push.getAuthor().lower():
-                    print('!!!!!!!!!!!!!!!!!!!!!!!')
-                    find = True
-                    break
 
-            if find:
+            if 'QQID' in post_info.origin_post.lower():
+                print('!!!!!!!!!!!!')
+                print(post_info.aid)
+                print('!!!!!!!!!!!!')
                 break
+
+
 
     except Exception as e:
         traceback.print_tb(e.__traceback__)
