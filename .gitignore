@@ -109,3 +109,4 @@ HatePoliticsList*.txt
 /PttApp/Account.txt
 .idea/
 PTTLibrary/
+/multi_thread_crawler/account_list.txt
