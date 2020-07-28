@@ -8,3 +8,9 @@
 
 ## time_post.py
 準點 PO 文機器人
+
+## magician_terminator.py
+魔法師終結者
+
+可以針對特定關鍵字寄信給文章作者  
+ex: 徵男
