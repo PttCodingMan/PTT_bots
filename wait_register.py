@@ -88,8 +88,16 @@ while True:
 
             delta_pick = 8984 - process_picks
 
+            print('process_picks', process_picks)
+            print('delta_pick', delta_pick)
+            print('delta_day', delta_day)
+
             if delta_pick != 0:
-                need_day = int(((process_picks / delta_pick) - 1) * delta_day)
+                avg_day_delta = (delta_pick / delta_day)
+
+                # print(f'平均每天消耗 {avg_day_delta}')
+
+                need_day = int(process_picks / avg_day_delta)
                 content = f'{date} {process_picks} 預估尚須等待 {need_day} 天'
             else:
                 content = f'今天為計算起始日無法計算，請明天重新執行'
