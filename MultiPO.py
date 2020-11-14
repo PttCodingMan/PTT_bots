@@ -86,10 +86,7 @@ def multi_po(board, max_post):
     if publish_content is None:
 
         publish_content = '此內容由抓超貼程式產生並張貼' + new_line
-        publish_content += '由 CodingMan 透過 PyPtt 開發，' + new_line * 2
-
-        publish_content += 'PyPtt: https://github.com/PttCodingMan/PyPtt' + new_line
-        publish_content += '抓超貼程式: https://git.io/JvC0t' + new_line * 2
+        publish_content += '由 CodingMan 透過 PyPtt 開發' + new_line * 2
 
         publish_content += f'PyPtt 版本: {PTT.version.V}' + new_line
 
@@ -227,7 +224,9 @@ if __name__ == '__main__':
     try:
         multi_po(current_board, max_post)
 
-        publish_content += new_line + '超貼工具下載' + new_line
+        publish_content += new_line + '超貼工具原始碼' + new_line
+        publish_content += 'https://git.io/Jk3F9' + new_line
+        publish_content += '超貼工具直接打包下載' + new_line
         publish_content += 'https://github.com/PttCodingMan/PTTBots/releases' + new_line
 
         CurrentDate = Util.get_date(dayAgo)
