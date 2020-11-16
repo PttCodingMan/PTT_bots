@@ -1,13 +1,10 @@
 ﻿
 import sys
-import os
 import time
 import json
 import getpass
-import codecs
 import traceback
 import math
-from datetime import date, timedelta
 # from time import gmtime, strftime
 
 from PTTLibrary import PTT
@@ -300,7 +297,7 @@ def HatePoliticsHandler(CurrentDate, AuthorList, IPList, MaxPost, Min, Sec):
 
 if __name__ == '__main__':
 
-    from time import gmtime, strftime
+    from time import strftime
 
     SearchList = [
         # ('Gossiping', ['Bignana', 'XXXXGAY'], 5, None),
@@ -313,7 +310,7 @@ if __name__ == '__main__':
     dayAgo = 0
 
     try:
-        with open('Account.txt') as AccountFile:
+        with open('../Account.txt') as AccountFile:
             Account = json.load(AccountFile)
             ID = Account['ID']
             Password = Account['Password']

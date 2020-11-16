@@ -1,13 +1,8 @@
 ﻿
 import sys
-import os
 import time
 import json
 import getpass
-import codecs
-import traceback
-import math
-from datetime import date, timedelta
 # from time import gmtime, strftime
 
 from PTTLibrary import PTT
@@ -25,7 +20,7 @@ new_line = '\r\n'
 
 if __name__ == '__main__':
 
-    from time import gmtime, strftime
+    from time import strftime
 
     dayAgo = 0
 

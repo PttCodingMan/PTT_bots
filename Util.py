@@ -202,19 +202,19 @@ def find_post_range(DayAgo, show=False):
     if show:
         print(f'biggest_target {biggest_target}')
 
-    Start = find_current_date_first(
+    start = find_current_date_first(
         biggest_target, newest_index, DayAgo, show=False)
 
     if show:
-        print(f'Start {Start}')
+        print(f'start {start}')
 
     if DayAgo > 0:
         end = find_current_date_first(
-            biggest_target, newest_index, DayAgo - 1, show=False, oldest_index=Start) - 1
+            biggest_target, newest_index, DayAgo - 1, show=False, oldest_index=start) - 1
     elif DayAgo == 0:
         end = newest_index
 
     if show:
-        print('Result', Start, end)
+        print('Result', start, end)
 
-    return Start, end
+    return start, end

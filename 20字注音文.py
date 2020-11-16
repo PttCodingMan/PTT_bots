@@ -1,11 +1,9 @@
 
-import sys, os
+import sys
 import time
 import json
 import getpass
-import codecs
-import traceback
-from datetime import date, timedelta
+
 # from time import gmtime, strftime
 sys.path.insert(0, 'D:/Git/PTTLibrary')
 from PTTLibrary import PTT

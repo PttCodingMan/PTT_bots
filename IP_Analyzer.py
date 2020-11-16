@@ -1,13 +1,7 @@
-
-import sys
-import os
 import time
 import json
 import getpass
-import codecs
-import traceback
 import math
-from datetime import date, timedelta
 # from time import gmtime, strftime
 
 from PTTLibrary import PTT
