@@ -206,6 +206,9 @@ if __name__ == '__main__':
 
     current_board = input('請輸入看板名稱: ')
     max_post = int(input('請輸入每天不得超過幾篇: '))
+    print('註: 因本工具原理為爬行會保留被刪除文章的 ALLPOST 版，此板沒有網頁版所以需要帳密')
+    print('如有安全疑慮，可自行取用原始碼執行')
+    print('https://github.com/PttCodingMan/PTT_bots/tree/master/multi_post')
     ptt_id = input('請輸入帳號: ')
     password = input('請輸入密碼: ')
 
@@ -218,7 +221,7 @@ if __name__ == '__main__':
         multi_po(current_board, max_post)
 
         publish_content += new_line + '超貼工具原始碼' + new_line
-        publish_content += 'https://git.io/Jk3F9' + new_line
+        publish_content += 'https://github.com/PttCodingMan/PTT_bots/tree/master/multi_post' + new_line
         publish_content += '超貼工具直接打包下載' + new_line
         publish_content += 'https://github.com/PttCodingMan/PTTBots/releases' + new_line
 
