@@ -1,5 +1,6 @@
 import json
 import time
+import traceback
 from datetime import datetime
 
 from PyPtt import PTT
@@ -18,12 +19,12 @@ if __name__ == '__main__':
             today.month,
             today.day,
             23,
-            58,
+            57,
             0)
         delta = sleep_time - today
         sleep_sec = delta.seconds
-        print('預計', sleep_sec + 120, '秒後推文')
-        print(int(sleep_sec / 3600), '小時又', int(((sleep_sec + 120) % 3600) / 60), '分鐘')
+        print('預計', sleep_sec + 180, '秒後推文')
+        print(int(sleep_sec / 3600), '小時又', int(((sleep_sec + 180) % 3600) / 60), '分鐘')
 
         time.sleep(sleep_sec)
 
@@ -31,15 +32,7 @@ if __name__ == '__main__':
         target_pre_time = '23:59'
 
         # 文章內文
-        content = '''
-        零秒 PO文新版演算法
-        '''
-        content = content.replace('\n', '\r\n')
-
-        print(f'TargetPreTime {target_pre_time}')
-        print(f'Board {current_board}')
-        print(f'Title {title}')
-        print(f'Content {content}')
+        content = '簽到'
 
         ready = False
         last_time = None
@@ -49,6 +42,9 @@ if __name__ == '__main__':
         )
 
         try:
+
+            ptt_bot.login(ptt_info['ptt_id'], ptt_info['ptt_pw'])
+
             while True:
 
                 slow_detect_time = 55
@@ -82,12 +78,12 @@ if __name__ == '__main__':
 
                 # 批踢踢的一分鐘過了
 
-            ptt_bot.post(
-                current_board,
-                title,
+            ptt_bot.push(
+                'Ptt25sign',
+                PTT.data_type.push_type.ARROW,
                 content,
-                2,
-                3)
+                post_aid=ptt_info['post_aid']
+            )
 
         except Exception as e:
             traceback.print_tb(e.__traceback__)
@@ -97,9 +93,6 @@ if __name__ == '__main__':
 
         print('登出                 ')
         ptt_bot.logout()
-
-
-
 
     # print()
 

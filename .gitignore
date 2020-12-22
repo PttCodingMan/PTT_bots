@@ -109,3 +109,4 @@ HatePoliticsList*.txt
 .idea/
 PTTLibrary/
 /multi_thread_crawler/account_list.txt
+/Ptt25signBot/ptt_info.json
