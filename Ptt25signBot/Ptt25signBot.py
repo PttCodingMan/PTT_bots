@@ -67,6 +67,7 @@ if __name__ == '__main__':
             '簽到',
             post_aid=ptt_info['post_aid']
         )
+    ptt_bot.logout()
 
     while True:
 
