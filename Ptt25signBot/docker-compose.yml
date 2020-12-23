@@ -1,0 +1,8 @@
+version: '3'
+services:
+  ptt25signbot:
+    build: .
+    container_name: ptt25signbot
+    restart: unless-stopped
+    volumes:
+      - ${PWD}:/app
