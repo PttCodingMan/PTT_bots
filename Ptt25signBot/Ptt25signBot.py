@@ -1,14 +1,51 @@
+import sys
 import json
 import time
 import traceback
 from datetime import datetime
+import tkinter
+from tkinter import messagebox
+root = tkinter.Tk()
+root.withdraw()
 
 from PyPtt import PTT
 
 if __name__ == '__main__':
-    with open('ptt_info.json') as f:
-        ptt_info = json.load(f)
-    # print(ptt_info)
+    try:
+        with open('ptt_info.json', encoding='utf-8') as f:
+            ptt_info = json.load(f)
+    except FileNotFoundError:
+        with open('ptt_info.json', 'w', encoding='utf-8') as f:
+            sample = '''{
+  "ptt_id": "你的 PTT ID",
+  "ptt_pw": "你的 PTT Password",
+  "post_aid": "簽到文章 AID"
+}
+'''
+            f.write(sample)
+            messagebox.showerror(title='25 周年簽到機器人', message='請修改 ptt_info.json 內的資訊')
+            sys.exit()
+
+    ptt_bot = PTT.API()
+    try:
+        ptt_bot.login(ptt_info['ptt_id'], ptt_info['ptt_pw'])
+    except PTT.exceptions.WrongIDorPassword:
+        messagebox.showerror(title='25 周年簽到機器人', message='帳號密碼錯誤，請確認 ptt_info.json 內的資訊')
+        sys.exit()
+
+    post_info = ptt_bot.get_post(
+        'Ptt25sign',
+        post_aid=ptt_info['post_aid']
+    )
+    if not post_info or not post_info.title or not post_info.author:
+        messagebox.showerror(title='25 周年簽到機器人', message='驗證文章 AID 失敗，請確認 ptt_info.json 內的資訊')
+        sys.exit()
+    # print(post_info.title)
+    # print(post_info.author)
+
+    if ptt_info['ptt_id'] not in post_info.author:
+        messagebox.showerror(title='25 周年簽到機器人', message='推文 ID 與簽到文 ID 不符，請確認 ptt_info.json 內的資訊')
+        sys.exit()
 
     while True:
 
@@ -93,12 +130,3 @@ if __name__ == '__main__':
 
         print('登出                 ')
         ptt_bot.logout()
-
-    # print()
-
-    # ptt_bot = PTT.API(
-    #     # LogLevel=PTT.LogLevel.TRACE
-    # )
-    #
-    # ptt_bot.login(ptt_info['ptt_id'], ptt_info['ptt_pw'])
-    # ptt_bot.push('Ptt25sign', PTT.data_type.push_type.PUSH, content, post_index=test_index)
