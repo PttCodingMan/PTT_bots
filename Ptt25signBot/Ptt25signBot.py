@@ -47,6 +47,27 @@ if __name__ == '__main__':
         messagebox.showerror(title='25 周年簽到機器人', message='推文 ID 與簽到文 ID 不符，請確認 ptt_info.json 內的資訊')
         sys.exit()
 
+    sign_today = False
+
+    today = datetime.now()
+    today = f'{today.month}/{today.day}'
+
+    for push in post_info.push_list:
+        print(push.time)
+        if today in push.time:
+            sign_today = True
+
+    if sign_today:
+        print('今天已經簽到')
+    else:
+        print('今天尚未簽到，進行補簽')
+        ptt_bot.push(
+            'Ptt25sign',
+            PTT.data_type.push_type.ARROW,
+            '簽到',
+            post_aid=ptt_info['post_aid']
+        )
+
     while True:
 
         today = datetime.now()
