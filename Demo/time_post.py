@@ -38,16 +38,16 @@ if __name__ == '__main__':
         sys.exit()
 
     # 預定 PO 文時間的 "前一分鐘"
-    target_pre_time = '11:21'
+    target_pre_time = '18:06'
 
     # PO 文看板
     current_board = 'Test'
     # 文章標題
     title = '零秒PO文新版演算法測試'
     # 文章內文
-    content = '''
-零秒 PO文新版演算法
-'''
+    content = '''零秒 PO文新版演算法
+using PyPtt'''
+
     content = content.replace('\n', '\r\n')
 
     print(f'TargetPreTime {target_pre_time}')
@@ -88,16 +88,14 @@ if __name__ == '__main__':
                 print('最後準備')
                 while last_time == current_time:
                     current_time = ptt_bot.get_time()
+
+                ptt_bot.fast_post(
+                    current_board,
+                    title,
+                    content,
+                    2,
+                    3)
                 break
-
-            # 批踢踢的一分鐘過了
-
-        ptt_bot.post(
-            current_board,
-            title,
-            content,
-            2,
-            3)
 
     except Exception as e:
         traceback.print_tb(e.__traceback__)
