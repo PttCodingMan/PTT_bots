@@ -83,7 +83,7 @@ if __name__ == '__main__':
         delta = sleep_time - today
         sleep_sec = delta.seconds
         print('預計', sleep_sec + 180, '秒後推文')
-        print(int(sleep_sec / 3600), '小時又', int(((sleep_sec + 180) % 3600) / 60), '分鐘')
+        print(int((sleep_sec + 180) / 3600), '小時又', int(((sleep_sec + 180) % 3600) / 60), '分鐘')
 
         time.sleep(sleep_sec)
 
