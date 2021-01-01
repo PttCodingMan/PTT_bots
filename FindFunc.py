@@ -48,16 +48,19 @@ def FindStrInFile(path, func):
         try:
             readFile(fname, func, 'Big5')
         except UnicodeDecodeError:
-            try:
-                readFile(fname, func, 'Utf-8')
-            except UnicodeDecodeError:
-                # print(f'{fname} decode error')
-                pass
+            pass
+
+        try:
+            readFile(fname, func, 'Utf-8')
+        except UnicodeDecodeError:
+            # print(f'{fname} decode error')
+            pass
+
                 # sys.exit()
 
     for subpath in d:
         FindStrInFile(f'{fullpath}/{subpath}', func)
 
 
-FindStrInFile('D:/Git/pttbbs', '板主:')
+FindStrInFile('D:/Git/pttbbs', '儲存檔案')
 print(count)
