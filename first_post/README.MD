@@ -18,13 +18,14 @@
 ##### 一台是交大實驗室，電腦是第三代 i7 記憶體時脈 1333MHZ ping 3 ms
 ##### 一台是本人家中，300 Mbps 的光纖網路 Ryzen7 3700X 記憶體時脈 3600MHZ ping 4~5 ms
 ##### 分別位列第一二名 ![](https://i.imgur.com/a338kMm.png)
-##### 搶到第一名的是交大實驗室的環境，可見網路速度佔了一大部分的勝利因子
+##### 除了證明演算法有用，搶到首 PO 的是 ping 較低的環境
+##### 雖然是三代 U 但可見網路速度佔了一大部分的勝利因子
 #####
 #### 1. 安裝 python & pip install PyPtt
 ##### 搜尋 python 找到官網之後，下載最新版本即可
 ##### 記得將 python 加入 path 或者自行建立 python 虛擬環境 venv
 #####
-#### 2. 修改參數
+#### 2. 修改程式碼參數
 ```python
 ptt_id, ptt_pw = 'PTT id', 'PTT pw'
 release = False
@@ -36,7 +37,7 @@ release = False
 ##### 此程式釋出之後，可能會提高搶首 PO 的難度，最好事先找到 ping 值最低的網路環境
 ##### 預祝各位搶首 PO 順利!
 ####
-## 原理說明
+## 演算法說明
 ##### 我採用一個帳號兩個登入，一個負責與 PTT 對時，這件事非常重要
 ##### 因為 PTT 主機的時間可能跟 time server 是不一致的，當你需要計較到 1 毫秒的差異的時候
 ##### 你就需要有 API 可以跟 PTT 對時 (參考: [PyPtt 對時 API](https://github.com/PttCodingMan/PyPtt/tree/master/doc#%E5%8F%96%E5%BE%97%E6%99%82%E9%96%93))
