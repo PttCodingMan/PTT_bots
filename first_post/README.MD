@@ -19,7 +19,7 @@
 #### 分別位列第一二名 ![](https://i.imgur.com/a338kMm.png)
 #### 搶到第一名的是交大實驗室的環境，可見網路速度佔了一大部分的勝利因子
 ####
-#### 1. 安裝 python
+#### 1. 安裝 python & pip install PyPtt
 #### 搜尋 python 找到官網之後，下載最新版本即可
 #### 記得將 python 加入 path 或者自行建立 python 虛擬環境 venv
 ####
