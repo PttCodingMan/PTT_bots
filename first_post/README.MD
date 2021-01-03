@@ -3,8 +3,9 @@
 #### 此機器人集中二技術力之大成，成功在 2021 新年搶到八卦版首 PO
 #### 本人發誓要是搶到首 PO，便再也不搶了，並且將程式碼釋出
 #### 因此才有了此篇說明教學，教導您如何順利地搶下首 PO
+####
 
-![](https://i.imgur.com/OSdj8JH.png)
+<img src="https://i.imgur.com/OSdj8JH.png" width="350"/>
 
 #### [首 PO 文章連結](https://www.ptt.cc/bbs/Gossiping/M.1609430402.A.DFF.html)
 
