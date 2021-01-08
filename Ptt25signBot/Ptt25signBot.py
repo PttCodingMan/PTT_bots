@@ -50,7 +50,7 @@ if __name__ == '__main__':
     sign_today = False
 
     today = datetime.now()
-    today = f'{today.month}/{today.day}'
+    today = f'{today.month:02}/{today.day:02}'
 
     for push in post_info.push_list:
         print(push.time)
