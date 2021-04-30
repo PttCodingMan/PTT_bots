@@ -41,7 +41,7 @@ if __name__ == '__main__':
         post_type = 3
 
     else:
-        target_pre_time = '23:15'
+        target_pre_time = '16:43'
         current_board = 'Test'
 
         title = '準點 PO 文測試'
@@ -50,10 +50,11 @@ if __name__ == '__main__':
 
     content = content.replace('\n', '\r\n')
 
-    print(f'TargetPreTime {target_pre_time}')
-    print(f'Board {current_board}')
-    print(f'Title {title}')
-    print(f'Content {content}')
+    print(f'目標前一分鐘 {target_pre_time}')
+    print(f'目標看板 {current_board}')
+    print(f'文章分類 {post_type}')
+    print(f'文章標題 {title}')
+    print(f'文章內文 {content}')
 
     ready = False
     last_time = None
