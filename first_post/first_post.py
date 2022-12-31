@@ -1,16 +1,15 @@
-import sys
+import datetime
 import os
+import sys
 import time
-import json
 import traceback
 
 from PyPtt import PTT
 
-ptt_id, ptt_pw = 'PTT id', 'PTT pw'
+ptt_id, ptt_pw = 'Your PTT ID', 'Your PTT PW'
 release = False
 
 if __name__ == '__main__':
-    os.system('cls')
     time_bot = PTT.API()
 
     try:
@@ -24,32 +23,49 @@ if __name__ == '__main__':
         time_bot.log('登入失敗 ' + ptt_id)
         sys.exit()
 
+    time.sleep(10)
+
     time_bot = PTT.API()
-    time_bot.login(
-        ptt_id,
-        ptt_pw)
+    post_bot = PTT.API()
+
+    for _ in range(5):
+        try:
+            time_bot.login(ptt_id, ptt_pw)
+            time.sleep(5)
+            post_bot.login(ptt_id, ptt_pw)
+            break
+        except PTT.exceptions.LoginError:
+            time_bot.log('登入失敗 ' + ptt_id)
+        except PTT.exceptions.LoginTooOften:
+            time_bot.log('登入太頻繁')
+        time.sleep(5)
+
+    content = PTT.command.Ctrl_Y * 10 + f'''不好意思，搶到首PO
+
+想請問一下有 2023 首PO的八卦嗎?
+
+--
+
+Post by https://pyptt.cc/
+'''
 
     if release:
         target_pre_time = '23:59'
         current_board = 'Gossiping'
 
-        title = '請問有2021首PO的八卦嗎?'
-        content = PTT.command.Ctrl_Y * 9 + '''不好意思，搶到首PO
-
-想請問一下有2021首PO的八卦嗎?'''
-
+        title = '請問有 2023 首PO的八卦嗎?'
         post_type = 3
 
     else:
-        target_pre_time = '16:43'
+        target_pre_time = (datetime.datetime.now() + datetime.timedelta(minutes=1)).strftime('%H:%M')
         current_board = 'Test'
 
         title = '準點 PO 文測試'
-        content = '''準點 PO 文測試'''
         post_type = 1
 
     content = content.replace('\n', '\r\n')
 
+    print('Python 版本: ' + sys.version)
     print(f'目標前一分鐘 {target_pre_time}')
     print(f'目標看板 {current_board}')
     print(f'文章分類 {post_type}')
@@ -68,9 +84,10 @@ if __name__ == '__main__':
 
             last_time = current_time = time_bot.get_time()
             while end_time - start_time < slow_detect_time:
-                time.sleep(1)
+                time.sleep(2)
                 end_time = time.time()
                 current_time = time_bot.get_time()
+                post_bot.get_time()
 
                 if last_time != current_time:
                     next_min = True
@@ -86,10 +103,6 @@ if __name__ == '__main__':
                 continue
 
             if ready:
-                post_bot = PTT.API()
-                post_bot.login(
-                    ptt_id,
-                    ptt_pw)
 
                 post_bot.fast_post_step0(
                     current_board,
@@ -109,6 +122,8 @@ if __name__ == '__main__':
         print(e)
     except KeyboardInterrupt:
         pass
+    finally:
+        time_bot.logout()
+        post_bot.logout()
 
     print('登出                 ')
-    time_bot.logout()
