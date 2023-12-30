@@ -6,6 +6,9 @@ import traceback
 
 from PyPtt import PTT
 
+# This script was created using PyPtt 0.9.
+# To use this script, please install PyPtt by running the following command:
+# pip install PyPtt==0.9.50
 ptt_id, ptt_pw = 'Your PTT ID', 'Your PTT PW'
 release = False
 
